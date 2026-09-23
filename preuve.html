@@ -1,0 +1,1167 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="light dark">
+<title>L'art de la preuve — rédiger une démonstration</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=Caveat:wght@500;700&family=STIX+Two+Text:ital,wght@0,400;0,600;1,400;1,600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#f2f5fa; --sheet:#ffffff; --tint:#eef3fb; --tint2:#fff7e0;
+  --grid:rgba(60,110,200,.22); --grid2:rgba(60,110,200,.09); --margin:#ee8b91;
+  --ink:#14224a; --ink2:#4a5677; --line:#d3dbe9;
+  --accent:#2340b5; --accent-ink:#ffffff; --red:#d6242f; --green:#1c7c4c; --amber:#9a6200;
+  --hl:rgba(255,214,64,.6);
+  --ok-bg:#ddf3e6; --ko-bg:#fde4e2; --blank:#fff3c4;
+  --shadow:0 1px 0 rgba(20,34,74,.06),0 16px 32px -20px rgba(20,34,74,.4);
+  --f-ui:"Bricolage Grotesque","Avenir Next","Segoe UI",system-ui,-apple-system,sans-serif;
+  --f-text:"STIX Two Text","Cambria Math","Times New Roman",Georgia,serif;
+  --f-hand:"Caveat","Bradley Hand","Segoe Script","Comic Sans MS",cursive;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --paper:#131d1a; --sheet:#1a2723; --tint:#213230; --tint2:#2d3122;
+    --grid:rgba(225,238,230,.11); --grid2:rgba(225,238,230,.05); --margin:#94575a;
+    --ink:#eeeadb; --ink2:#b4b8a8; --line:#33443e;
+    --accent:#9db8ff; --accent-ink:#10203f; --red:#ff9488; --green:#86dfae; --amber:#f0c261;
+    --hl:rgba(240,200,70,.3);
+    --ok-bg:#1d4030; --ko-bg:#4a2825; --blank:#3b3b22;
+    --shadow:0 1px 0 rgba(0,0,0,.3),0 16px 32px -20px rgba(0,0,0,.8);
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#131d1a; --sheet:#1a2723; --tint:#213230; --tint2:#2d3122;
+  --grid:rgba(225,238,230,.11); --grid2:rgba(225,238,230,.05); --margin:#94575a;
+  --ink:#eeeadb; --ink2:#b4b8a8; --line:#33443e;
+  --accent:#9db8ff; --accent-ink:#10203f; --red:#ff9488; --green:#86dfae; --amber:#f0c261;
+  --hl:rgba(240,200,70,.3);
+  --ok-bg:#1d4030; --ko-bg:#4a2825; --blank:#3b3b22;
+  --shadow:0 1px 0 rgba(0,0,0,.3),0 16px 32px -20px rgba(0,0,0,.8);
+}
+*,*::before,*::after{box-sizing:inherit}
+html{scroll-padding-top:calc(env(safe-area-inset-top,0px) + 9rem);-webkit-text-size-adjust:100%}
+body{margin:0;min-height:100%;color:var(--ink);background-color:var(--paper);
+  background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px),linear-gradient(var(--grid2) 1px,transparent 1px);
+  background-size:32px 32px,32px 32px,8px 8px;
+  font:400 1.0625rem/1.68 var(--f-text)}
+[hidden]{display:none!important}
+p{margin:.6em 0;max-width:68ch}
+b,strong{font-weight:600}
+i{font-style:italic}
+:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+button{font-family:inherit}
+
+/* ---------- en-tête ---------- */
+.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:var(--paper);border-bottom:2px solid var(--ink)}
+.top-in{max-width:1040px;margin:0 auto;padding:.65rem clamp(12px,3vw,28px) 0}
+.row1{display:flex;align-items:center;justify-content:space-between;gap:1rem}
+.brand h1{margin:0;font:800 clamp(1.3rem,3.6vw,1.8rem)/1.05 var(--f-ui);letter-spacing:-.02em}
+.brand h1 .qed{color:var(--red);margin-left:.15em}
+.brand small{display:block;margin-top:.15rem;font:500 .82rem var(--f-ui);color:var(--ink2)}
+.tools{display:flex;align-items:center;gap:.75rem}
+.gauge{display:flex;align-items:center;gap:.5rem;font:600 .8rem var(--f-ui);color:var(--ink2)}
+.bar{width:86px;height:8px;border-radius:99px;background:var(--tint);border:1px solid var(--line);overflow:hidden}
+.bar i{display:block;height:100%;width:0;background:var(--green);transition:width .4s}
+.icon-btn{width:38px;height:38px;border-radius:50%;border:1.5px solid var(--ink);background:transparent;color:var(--ink);font-size:1.05rem;cursor:pointer;line-height:1}
+.icon-btn:hover{background:var(--tint)}
+.nav{display:flex;gap:.45rem;overflow-x:auto;padding:.6rem 0 .75rem;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+.nav::-webkit-scrollbar{display:none}
+.nav-chip{flex:none;display:inline-flex;align-items:center;gap:.45rem;padding:.35rem .75rem .35rem .4rem;border:1.5px solid var(--line);border-radius:999px;background:var(--sheet);color:var(--ink);font:600 .86rem var(--f-ui);cursor:pointer;white-space:nowrap}
+.nav-chip:hover{border-color:var(--accent)}
+.nav-chip .ico{display:grid;place-items:center;min-width:1.65rem;height:1.65rem;padding:0 .2rem;border-radius:999px;background:var(--tint);font:italic 600 .85rem var(--f-text)}
+.nav-chip .cnt{font:600 .72rem var(--f-ui);color:var(--ink2)}
+.nav-chip.complete .cnt{color:var(--green)}
+.nav-chip[aria-current="page"]{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+.nav-chip[aria-current="page"] .ico{background:var(--paper);color:var(--ink)}
+.nav-chip[aria-current="page"] .cnt{color:var(--paper);opacity:.85}
+
+/* ---------- feuille ---------- */
+main{max-width:1040px;margin:0 auto;padding:clamp(14px,3vw,30px) clamp(10px,3vw,28px) 2.5rem}
+.tech{position:relative;background:var(--sheet);border:1px solid var(--line);border-radius:10px;box-shadow:var(--shadow);
+  padding:clamp(20px,4vw,42px) clamp(16px,4vw,48px) clamp(24px,4vw,42px) clamp(36px,7vw,86px);animation:fade .25s ease-out}
+.tech::before{content:"";position:absolute;top:0;bottom:0;left:clamp(20px,4.4vw,58px);width:2px;background:var(--margin)}
+@keyframes fade{from{opacity:0}to{opacity:1}}
+@media (prefers-reduced-motion:reduce){.tech{animation:none}.bar i{transition:none}}
+.tech-head{display:flex;gap:1.1rem;align-items:center;margin-bottom:1.2rem}
+.glyph{flex:none;min-width:1.2em;text-align:center;font:italic 700 clamp(2.6rem,7vw,4.4rem)/1 var(--f-text);color:transparent;-webkit-text-stroke:1.6px var(--red)}
+.tech-head h2{margin:0 0 .3rem;font:800 clamp(1.6rem,4.4vw,2.35rem)/1.08 var(--f-ui);letter-spacing:-.02em}
+.lead{margin:0;color:var(--ink2);font-size:1.08rem}
+.blk{margin-top:2.3rem}
+.blk>h3{display:flex;align-items:baseline;gap:.6rem;margin:0 0 .8rem;font:700 1.3rem/1.2 var(--f-ui);letter-spacing:-.01em}
+.blk>h3 .ttl{text-decoration:underline;text-decoration-color:var(--red);text-decoration-thickness:2px;text-underline-offset:6px}
+.mini{margin-left:auto;font:600 .8rem var(--f-ui);color:var(--ink2)}
+mark{background:linear-gradient(transparent 52%,var(--hl) 52%);color:inherit;padding:0 .08em}
+u{text-decoration-color:var(--red);text-underline-offset:3px}
+.m{white-space:normal}
+.m sup,.m sub{font-size:.7em;line-height:0}
+.ss{display:inline-flex;flex-direction:column;justify-content:center;vertical-align:middle;font-size:.68em;line-height:1.1;text-align:center;margin:0 .1em}
+.sig{font-size:1.4em;line-height:.8;vertical-align:-.1em}
+.rad{white-space:nowrap}.ov{border-top:1.5px solid currentColor;padding:0 .08em;margin-left:.04em}
+.note{margin:.8rem 0;padding:.7rem 1rem;border-left:4px solid var(--amber);background:var(--tint2);border-radius:0 8px 8px 0}
+
+/* ---------- boutons ---------- */
+.btn{font:600 .9rem var(--f-ui);padding:.5rem 1rem;border-radius:999px;border:1.5px solid var(--ink);background:transparent;color:var(--ink);cursor:pointer}
+.btn:hover{background:var(--tint)}
+.btn:active{transform:translateY(1px)}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.btn.primary:hover{filter:brightness(1.1)}
+.btn.sm{padding:.28rem .75rem;font-size:.8rem}
+
+/* ---------- intro, squelette, tableaux ---------- */
+.how{margin:0 0 .5rem;padding:1rem 1.2rem;border-radius:10px;background:var(--tint);border:1px solid var(--line)}
+.how-t{margin:0 0 .3rem;font:700 1rem var(--f-ui)}
+.how ol{margin:0;padding-left:1.3rem}.how li{margin:.25rem 0}
+.skel{list-style:none;counter-reset:s;margin:0;padding:.9rem 1.1rem;border:2px dashed var(--ink2);border-radius:10px;background:var(--tint)}
+.skel li{counter-increment:s;position:relative;padding-left:2.3rem;margin:.6rem 0}
+.skel li::before{content:counter(s);position:absolute;left:0;top:.15em;width:1.55rem;height:1.55rem;border-radius:50%;background:var(--ink);color:var(--paper);display:grid;place-items:center;font:700 .78rem var(--f-ui)}
+.conn{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:.8rem}
+.cg{padding:.7rem .9rem;border:1.5px solid var(--line);border-radius:10px;background:var(--sheet)}
+.cg h4{margin:0 0 .35rem;font:700 .95rem var(--f-ui);color:var(--red)}
+.cg p{margin:0}
+.w{display:inline-block;margin:.15rem .25rem .15rem 0;padding:.1rem .55rem;border-radius:6px;background:var(--tint);border:1px solid var(--line);font-style:italic;font-size:.97rem}
+.tbl-wrap{overflow-x:auto;max-width:100%}
+.tbl{border-collapse:collapse;width:100%;font-size:.98rem}
+.tbl th,.tbl td{padding:.5rem .75rem;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+.tbl th{font:700 .88rem var(--f-ui);border-bottom:2px solid var(--ink)}
+.yes{color:var(--green);font-weight:700}.no{color:var(--red);font-weight:700}
+.pick{display:flex;justify-content:space-between;align-items:center;gap:1rem;width:100%;text-align:left;margin:.4rem 0;padding:.6rem .9rem;border:1.5px solid var(--line);border-radius:10px;background:var(--sheet);color:inherit;font:inherit;cursor:pointer}
+.pick:hover{border-color:var(--accent);background:var(--tint)}
+.pick .tag{flex:none;padding:.15rem .65rem;border-radius:999px;background:var(--ink);color:var(--paper);font:600 .8rem var(--f-ui)}
+
+/* ---------- copie annotée ---------- */
+.copy{border:1px solid var(--line);border-radius:10px;background:var(--tint);padding:1rem clamp(.8rem,2.5vw,1.4rem) .6rem}
+.copy-head{display:flex;flex-wrap:wrap;gap:.6rem 1rem;align-items:flex-start;justify-content:space-between}
+.stmt{margin:.1rem 0 .6rem;font-weight:600}
+.proof{list-style:none;counter-reset:p;margin:0;padding:0}
+.proof>li{counter-increment:p;position:relative;display:grid;grid-template-columns:1fr;gap:.2rem 1.8rem;padding:.8rem 0 .8rem 2.5rem;border-top:1px dashed var(--line)}
+.proof>li:first-child{border-top:0}
+.proof>li::before{content:counter(p);position:absolute;left:0;top:.95rem;width:1.65rem;height:1.65rem;border-radius:50%;border:1.5px solid var(--ink2);display:grid;place-items:center;font:600 .75rem var(--f-ui);color:var(--ink2)}
+.pt{font-size:1.1rem}
+.pn{font:600 1.28rem/1.12 var(--f-hand);color:var(--red)}
+.pn>span::before{content:"↳ "}
+@media (min-width:860px){
+  .proof>li{grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);align-items:start}
+  .pn{transform:rotate(-.7deg);padding-top:.1rem}
+  .pn>span::before{content:"← "}
+}
+.copy.hide-notes .pn{display:none}
+.copy.hide-notes .proof>li{grid-template-columns:1fr}
+.legend{margin:.3rem 0 .5rem;font:400 .86rem var(--f-ui);color:var(--ink2)}
+
+/* ---------- textes à trous ---------- */
+.cloze{margin:1.1rem 0;padding:1rem clamp(.9rem,2.5vw,1.4rem) 1.1rem;border:1.5px solid var(--ink2);border-radius:12px;background:var(--tint)}
+.cz-title{display:flex;flex-wrap:wrap;align-items:center;gap:.6rem;margin:0 0 .3rem;font:700 1.08rem var(--f-ui)}
+.cz-title::before{content:"À compléter";padding:.12rem .55rem;border-radius:6px;background:var(--red);color:var(--accent-ink);font:600 .75rem var(--f-ui)}
+.is-done .cz-title::after,.qcm.prev-ok .q::after{content:"✓ déjà réussi";margin-left:.6rem;padding:.08rem .5rem;border-radius:999px;background:var(--ok-bg);color:var(--green);font:600 .74rem var(--f-ui);vertical-align:.1em}
+.cz-text{margin:.6rem 0;padding:.5rem 1rem;background:var(--sheet);border:1px solid var(--line);border-radius:8px}
+.cz-text p{margin:.15rem 0;line-height:2.25;max-width:none}
+.blank{font:inherit;font-size:1em;color:var(--ink);text-align:center;padding:.02em .3em;margin:0 .1em;border:0;border-bottom:2px dashed var(--ink2);border-radius:4px 4px 0 0;background:var(--blank);min-width:3.5ch}
+.blank::placeholder{color:var(--ink2);opacity:.7;font-size:.8em}
+.blank:focus{outline:none;border-bottom-color:var(--accent);box-shadow:0 2px 0 var(--accent)}
+.blank.target{box-shadow:0 0 0 2px var(--accent)}
+.blank.ok{background:var(--ok-bg);border-bottom:2px solid var(--green)}
+.blank.ko{background:var(--ko-bg);border-bottom:2px solid var(--red)}
+.blank.shown{background:var(--tint);border-bottom:2px solid var(--accent)}
+.cz-actions{display:flex;flex-wrap:wrap;gap:.5rem}
+.cz-fb{min-height:1.5em;margin:.6rem 0 0;font:500 .95rem var(--f-ui)}
+.cz-fb.good{color:var(--green)}.cz-fb.warn{color:var(--amber)}
+.cz-hints,.cz-bank{margin:.6rem 0 0;padding:.6rem .9rem;border-radius:8px;background:var(--sheet);border:1px dashed var(--ink2);font:400 .95rem var(--f-ui)}
+.cz-hints ol{margin:0;padding-left:1.2rem}.cz-hints li{margin:.2rem 0}
+.cz-bank{display:flex;flex-wrap:wrap;gap:.4rem}
+.chip{padding:.15rem .65rem;border:1px solid var(--ink2);border-radius:999px;background:var(--sheet);color:inherit;font:400 .98rem var(--f-text);cursor:pointer}
+.chip:hover{background:var(--hl)}
+
+/* ---------- QCM ---------- */
+.qcm{margin:1rem 0;padding:1rem 1.1rem;border:1.5px solid var(--line);border-radius:12px;background:var(--sheet)}
+.qcm .q{margin:.1rem 0 .7rem;font-weight:500;max-width:none}
+.qn{display:inline-block;margin-right:.6rem;padding:.05rem .5rem;border-radius:6px;background:var(--ink);color:var(--paper);font:700 .78rem var(--f-ui);vertical-align:.12em}
+.opts{display:grid;gap:.5rem}
+.opt{display:flex;gap:.7rem;align-items:flex-start;width:100%;text-align:left;padding:.6rem .8rem;border:1.5px solid var(--line);border-radius:10px;background:var(--tint);color:inherit;font:inherit;cursor:pointer}
+.opt:hover:not(:disabled){border-color:var(--accent)}
+.opt .l{flex:none;width:1.55rem;height:1.55rem;margin-top:.12rem;border-radius:50%;border:1.5px solid var(--ink2);display:grid;place-items:center;font:700 .75rem var(--f-ui)}
+.opt:disabled{cursor:default;color:inherit}
+.opt:disabled:not(.right):not(.wrong){opacity:.55}
+.opt.right{background:var(--ok-bg);border-color:var(--green)}
+.opt.right .l{background:var(--green);border-color:var(--green);color:var(--accent-ink);font-size:0}
+.opt.right .l::after{content:"✓";font-size:.85rem}
+.opt.wrong{background:var(--ko-bg);border-color:var(--red)}
+.opt.wrong .l{background:var(--red);border-color:var(--red);color:var(--accent-ink);font-size:0}
+.opt.wrong .l::after{content:"✗";font-size:.85rem}
+.why{margin-top:.7rem;padding:.6rem .9rem;border-left:4px solid var(--ink2);border-radius:0 8px 8px 0;font-size:1rem}
+.why p{margin:.2rem 0;max-width:none}
+.is-ok .why{border-color:var(--green);background:var(--ok-bg)}
+.is-ko .why{border-color:var(--red);background:var(--ko-bg)}
+
+/* ---------- pièges ---------- */
+.pit{margin:.9rem 0}
+.pit-grid{display:grid;grid-template-columns:1fr;gap:.5rem}
+@media (min-width:720px){.pit-grid{grid-template-columns:1fr 1fr}}
+.bad,.good{padding:.6rem .9rem;border-radius:0 8px 8px 0}
+.bad{border-left:4px solid var(--red);background:var(--ko-bg)}
+.good{border-left:4px solid var(--green);background:var(--ok-bg)}
+.bad b,.good b{display:block;font:700 .82rem var(--f-ui);margin-bottom:.1rem}
+.bad b{color:var(--red)}.good b{color:var(--green)}
+.pwhy{margin:.4rem 0 0;font:400 .92rem var(--f-ui);color:var(--ink2)}
+
+/* ---------- navigation bas de page, défi ---------- */
+.pager{display:flex;flex-wrap:wrap;justify-content:space-between;gap:.8rem;margin-top:2.4rem;padding-top:1.2rem;border-top:2px solid var(--ink)}
+.scorebox{display:flex;flex-wrap:wrap;align-items:center;gap:.4rem 1.2rem;margin:0 0 1rem;padding:.8rem 1.1rem;border:2px solid var(--ink);border-radius:12px;font:600 1rem var(--f-ui)}
+.scorebox .big{font:800 2.2rem/1 var(--f-ui)}
+footer{max-width:1040px;margin:0 auto;padding:0 clamp(12px,3vw,28px) 2.5rem;display:flex;flex-wrap:wrap;gap:.8rem;justify-content:space-between;align-items:center;color:var(--ink2);font:400 .85rem var(--f-ui)}
+@media (max-width:560px){.brand small,.gauge span{display:none}.bar{width:60px}.tech-head{gap:.7rem}}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="top-in">
+    <div class="row1">
+      <div class="brand">
+        <h1>L'art de la preuve<span class="qed" aria-hidden="true">∎</span></h1>
+        <small>Rédiger une démonstration : récurrence, absurde, contraposée…</small>
+      </div>
+      <div class="tools">
+        <div class="gauge" title="Ta progression"><span id="gauge-txt">0 %</span><div class="bar"><i id="gauge-bar"></i></div></div>
+        <button type="button" class="icon-btn" id="themeBtn" aria-label="Changer de thème">☾</button>
+      </div>
+    </div>
+    <nav class="nav" id="nav" aria-label="Chapitres"></nav>
+  </div>
+</header>
+<main id="main" tabindex="-1"><noscript><p>Ce site a besoin de JavaScript pour afficher les exercices.</p></noscript></main>
+<footer>
+  <span>Ta progression est enregistrée dans ce navigateur.</span>
+  <button type="button" class="btn sm" data-act="resetall">Réinitialiser ma progression</button>
+</footer>
+<script>
+(function(){
+"use strict";
+/* ================= utilitaires ================= */
+const $=(s,r=document)=>r.querySelector(s);
+const $$=(s,r=document)=>Array.from(r.querySelectorAll(s));
+const esc=s=>String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+const attr=s=>esc(s).replace(/"/g,"&quot;");
+const shuffle=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));const t=a[i];a[i]=a[j];a[j]=t;}return a;};
+const strip=t=>t.charAt(0)==="{"?t.slice(1,-1):t;
+
+/* mini-moteur de maths : $ ... $  avec ^ _ ∑ √{...} */
+function math(src){
+  let s=src.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/-/g,"−");
+  s=s.replace(/[A-Za-z]+/g,m=>m.length===1?"<i>"+m+"</i>":m);
+  s=s.replace(/√\{([^}]*)\}/g,'<span class="rad">√<span class="ov">$1</span></span>');
+  s=s.replace(/_\{([^}]*)\}\^\{([^}]*)\}/g,'<span class="ss"><span>$2</span><span>$1</span></span>');
+  s=s.replace(/\^(\{[^}]*\}|<i>[A-Za-z]<\/i>|[0-9]|\*)/g,(m,t)=>"<sup>"+strip(t)+"</sup>");
+  s=s.replace(/_(\{[^}]*\}|<i>[A-Za-z]<\/i>|[0-9])/g,(m,t)=>"<sub>"+strip(t)+"</sub>");
+  s=s.replace(/∑/g,'<span class="sig">∑</span>');
+  return '<span class="m">'+s+"</span>";
+}
+function rich(s){
+  return String(s).replace(/\$([^$]+)\$/g,(m,a)=>math(a))
+    .replace(/ ([:;?!»])/g,"\u00a0$1").replace(/«(?: |\u00a0)/g,"«\u00a0");
+}
+/* normalisation des réponses saisies */
+function norm(s){
+  return String(s).toLowerCase()
+    .normalize("NFD").replace(/[\u0300-\u036f]/g,"")
+    .replace(/[’‘`´]/g,"'").replace(/[−–—]/g,"-")
+    .replace(/²/g,"^2").replace(/³/g,"^3")
+    .replace(/>=/g,"≥").replace(/<=/g,"≤")
+    .replace(/[×·*]/g,"").replace(/[\s.,;:!?]/g,"");
+}
+
+/* ================= blocs génériques (chapitre « bases ») ================= */
+const CONN=[
+ ["Introduire",["Soit","Posons","Notons","Considérons","Fixons","Supposons que"]],
+ ["Justifier",["car","puisque","comme","or","par hypothèse","par définition","d'après le théorème de …"]],
+ ["Déduire",["donc","ainsi","d'où","par conséquent","on en déduit que","il vient que"]],
+ ["Structurer",["Cas 1 / Cas 2","Réciproquement","Initialisation","Hérédité","Analyse","Synthèse"]],
+ ["Conclure",["dans tous les cas","ce qui prouve que","CQFD","∎"]]
+];
+function connHTML(){
+  return '<div class="conn">'+CONN.map(g=>'<div class="cg"><h4>'+g[0]+'</h4><p>'+g[1].map(w=>'<span class="w">'+esc(w)+"</span>").join("")+"</p></div>").join("")+"</div>";
+}
+function planHTML(){
+  return '<p>Le quantificateur ou le symbole logique de l\'énoncé dicte la première phrase de ta rédaction.</p>'+
+  '<div class="tbl-wrap"><table class="tbl"><thead><tr><th>Tu dois démontrer</th><th>Tu écris</th></tr></thead><tbody>'+
+  "<tr><td>« Pour tout $x$, $P(x)$ »</td><td>« Soit $x$ quelconque. » Un exemple ne suffit jamais.</td></tr>"+
+  "<tr><td>« Il existe $x$ tel que $P(x)$ »</td><td>« Prenons $x = …$ », puis on vérifie que $P(x)$ est vraie. Un exemple suffit.</td></tr>"+
+  "<tr><td>« $P ⇒ Q$ »</td><td>« Supposons $P$. » … « Donc $Q$. »</td></tr>"+
+  "<tr><td>« $P ⇔ Q$ »</td><td>« (⇒) … » puis « (⇐) … » : deux implications.</td></tr>"+
+  "</tbody></table></div>";
+}
+const CHOOSE=[
+ ["Une propriété $P(n)$ pour tout entier $n$, qui se transmet de $n$ à $n+1$","recurrence"],
+ ["L'énoncé se scinde en situations : pair / impair, signe de $x$, reste modulo 3…","cas"],
+ ["Dans « $P ⇒ Q$ », la négation de $Q$ est plus facile à exploiter que $P$","contraposee"],
+ ["Il faut prouver une non-existence, une irrationalité ou une infinité","absurde"],
+ ["« Il existe un unique… » ou « Trouver toutes les solutions »","analyse"],
+ ["Il faut réfuter une propriété de la forme « pour tout »","contre"],
+ ["Aucun de ces signaux : on part des hypothèses et on calcule","directe"]
+];
+function chooseHTML(){
+  return "<p>Repère le signal dans l'énoncé, puis clique pour aller au chapitre correspondant.</p>"+
+   CHOOSE.map(c=>{const t=TECHS.find(x=>x.id===c[1]);return '<button type="button" class="pick" data-go="'+c[1]+'"><span>'+c[0]+'</span><span class="tag">'+esc(t.nav)+"</span></button>";}).join("");
+}
+function introHTML(){
+  return '<div class="how"><p class="how-t">Comment utiliser ce site</p><ol>'+
+   "<li><b>Lis</b> le principe et le squelette de chaque technique.</li>"+
+   "<li><b>Observe</b> la copie annotée : les remarques en rouge expliquent chaque phrase.</li>"+
+   "<li><b>Complète</b> les textes à trous en tapant ta réponse (un indice et une banque de mots t'attendent si tu bloques).</li>"+
+   "<li><b>Teste</b> tes formulations avec les QCM, puis relève le défi final.</li></ol></div>";
+}
+
+/* ================= contenu des chapitres ================= */
+const TECHS=[];
+
+TECHS.push({
+id:"bases",nav:"Les bases",icon:"¶",
+title:"Les bases de la rédaction",
+lead:"Avant les grandes techniques : les réflexes qui rendent n'importe quelle démonstration lisible, juste et convaincante.",
+intro:true,
+principle:[
+ "Une démonstration n'est pas un calcul posé en vrac : c'est un <b>texte</b>. Chaque phrase doit être <b>vraie</b> et <b>justifiée</b> — par une hypothèse, une définition, un théorème du cours ou une phrase précédente. Le lecteur ne doit jamais se demander « d'où ça sort ? ».",
+ "Deux règles d'or : <b>introduire</b> chaque objet avant de s'en servir (« Soit $x ∈ ℝ$ », « Posons $u = …$ »), et <b>conclure</b> en reformulant exactement ce qu'on voulait démontrer."
+],
+skeleton:[
+ "<u>Introduire</u> les objets : « Soit … », « Posons … », « Supposons que … ».",
+ "<u>Traduire</u> les hypothèses avec les définitions du cours.",
+ "<u>Enchaîner</u> les déductions, chacune avec sa justification (« car », « d'après », « par hypothèse »…).",
+ "<u>Conclure</u> en reprenant l'énoncé : « Ainsi, pour tout …, … », puis ∎ ou CQFD."
+],
+extras:[
+ {title:"Le vocabulaire de liaison",html:connHTML},
+ {title:"Lire l'énoncé, c'est planifier la rédaction",html:planHTML},
+ {title:"Quelle technique choisir ?",html:chooseHTML}
+],
+example:{
+ statement:"Montrer que pour tout réel $x$, $x^2 - 2x + 2 > 0$.",
+ lines:[
+  ["<mark>Soit</mark> $x ∈ ℝ$.","« Soit » : $x$ est un réel quelconque, donc ce qu'on démontre vaut pour tous les réels."],
+  ["<mark>On a</mark> $x^2 - 2x + 2 = (x-1)^2 + 1$.","Une égalité que le lecteur vérifie en développant. On peut l'écrire : « en développant, on vérifie que »."],
+  ["<mark>Or</mark> un carré est toujours positif ou nul, <mark>donc</mark> $(x-1)^2 ≥ 0$.","« Or » introduit le fait connu qu'on utilise ; « donc » en tire la conséquence."],
+  ["<mark>D'où</mark> $x^2 - 2x + 2 ≥ 1 > 0$.","On ajoute 1 des deux côtés : un seul pas par phrase, facile à suivre."],
+  ["<mark>Ainsi</mark>, pour tout réel $x$, $x^2 - 2x + 2 > 0$. ∎","La conclusion reprend l'énoncé, avec son « pour tout »."]
+ ]
+},
+cloze:[{
+ title:"Complète les mots de liaison",
+ statement:"Montrer que pour tout réel $x$, $x^2 + 2x + 3 > 0$.",
+ text:"[[b1]] $x ∈ ℝ$. On a $x^2 + 2x + 3 = (x+1)^2 + 2$.\n[[b2]] un carré est toujours positif ou nul, [[b3]] $(x+1)^2 ≥ 0$, [[b4]] $x^2 + 2x + 3 ≥ 2 > 0$.\n[[b5]], pour tout réel $x$, $x^2 + 2x + 3 > 0$. [[b6]]",
+ blanks:{
+  b1:{a:["soit","considérons","fixons","prenons"],h:"Le mot qui introduit un réel quelconque (un seul mot)."},
+  b2:{a:["or","comme","puisque","on sait que"],h:"Il introduit un fait connu du cours, qu'on va utiliser."},
+  b3:{a:["donc","ainsi","d'où","on a donc","par conséquent"],h:"Il tire la conséquence de ce fait."},
+  b4:{a:["d'où","donc","ainsi","par conséquent","on en déduit que"],h:"Encore un mot de déduction : on ajoute 2 des deux côtés."},
+  b5:{a:["ainsi","donc","par conséquent","on a donc","finalement"],h:"Il annonce la conclusion, qui reprend l'énoncé."},
+  b6:{a:["cqfd","∎","ce qu'il fallait démontrer"],h:"L'abréviation de « ce qu'il fallait démontrer »."}
+ },
+ extra:["car","supposons"]
+}],
+qcm:[
+ {q:"Pour démontrer <b>directement</b> « pour tout réel $x$, $x^2 + 1 > 0$ », la rédaction commence par :",
+  o:["« Prenons $x = 2$ : $2^2 + 1 = 5 > 0$. »","« Soit $x ∈ ℝ$. »","« Supposons qu'il existe $x ∈ ℝ$ tel que $x^2 + 1 ≤ 0$. »"],a:1,
+  ex:"Pour un « pour tout », on fixe un réel quelconque. Un seul exemple ne prouve rien, et la troisième phrase est le début d'un raisonnement par l'absurde (une autre technique)."},
+ {q:"On sait que $x > 1$. Quelle phrase justifie correctement que $x^2 > 1$ ?",
+  o:["« On voit bien que $x^2 > 1$. »","« Il est évident que $x^2 > 1$. »","« Comme $x > 1 > 0$, on peut multiplier l'inégalité par $x$ : $x^2 > x > 1$. »"],a:2,
+  ex:"« C'est évident » et « on voit bien » n'apportent aucune justification. La bonne phrase dit quelle propriété est utilisée (multiplier une inégalité par un réel positif)."},
+ {q:"Pour démontrer « il existe $n ∈ ℕ$ tel que $n^2 = 49$ », il suffit d'écrire :",
+  o:["« Soit $n ∈ ℕ$ quelconque. Alors $n^2 = 49$. »","« Testons $n = 1, 2, 3$ : aucun ne convient. »","« Prenons $n = 7$. On a bien $7^2 = 49$. »"],a:2,
+  ex:"Pour un « il existe », on exhibe un objet et on vérifie qu'il convient. La première phrase est fausse (tout $n$ ne vérifie pas $n^2 = 49$)."},
+ {q:"Dans la phrase « Or un carré est toujours positif », le mot « or » sert à :",
+  o:["introduire un fait connu qu'on va utiliser","conclure la démonstration","faire une hypothèse supplémentaire"],a:0,
+  ex:"« Or » amène un argument (théorème, propriété, définition) ; c'est « donc » ou « ainsi » qui tirent la conséquence."},
+ {q:"Quelle conclusion est la mieux rédigée pour l'énoncé « pour tout réel $x$, $x^2 + 2x + 3 > 0$ » ?",
+  o:["« Ainsi, pour tout réel $x$, $x^2 + 2x + 3 > 0$. »","« Voilà, c'est bon. »","« Donc $x^2 + 2x + 3 > 0$. »"],a:0,
+  ex:"La conclusion reprend l'énoncé complet, avec son « pour tout ». La troisième version oublie de dire que $x$ était quelconque."}
+],
+pits:[
+ {bad:"« Il est évident que $f$ est continue. »",good:"« $f$ est continue sur ℝ comme somme de fonctions continues. »",why:"Une affirmation sans justification n'est pas une démonstration."},
+ {bad:"« Pour $n = 1, 2, 3$, c'est vrai, donc c'est vrai pour tout $n$. »",good:"« Soit $n ∈ ℕ$ quelconque… » (ou une récurrence)",why:"Des exemples ne prouvent jamais une propriété universelle."},
+ {bad:"« $x > 0 ⇒ x + 1 > 1 ⇒ …$ » écrit au milieu du texte",good:"« Comme $x > 0$, on a $x + 1 > 1$, donc … »",why:"Les symboles ⇒ et ⇔ servent dans les énoncés ; dans la rédaction, on écrit des phrases."}
+]
+});
+
+TECHS.push({
+id:"directe",nav:"Preuve directe",icon:"⇒",
+title:"La preuve directe",
+lead:"La technique par défaut : partir des hypothèses, avancer pas à pas, arriver à la conclusion.",
+principle:[
+ "On part des <b>hypothèses</b>, on enchaîne des déductions et on arrive à la <b>conclusion</b>. Pour une implication « $P ⇒ Q$ », on suppose $P$ vraie et on démontre $Q$.",
+ "Le premier réflexe : <b>traduire</b> chaque hypothèse avec sa définition (« $n$ est pair » devient « il existe $k ∈ ℤ$ tel que $n = 2k$ »), puis calculer jusqu'à retomber sur la définition de la conclusion.",
+ "Pour une <b>équivalence</b> « $P ⇔ Q$ », on démontre deux implications et on l'annonce : « (⇒) … » puis « (⇐) … »."
+],
+skeleton:[
+ "« Soit … . Supposons que $P$. »",
+ "Traduire $P$ avec sa définition : « Il existe … tel que … ».",
+ "Calculer, déduire, en justifiant chaque pas.",
+ "Reconnaître la définition de $Q$ : « Donc $Q$. »",
+ "(Équivalence) Recommencer dans l'autre sens : « Réciproquement, supposons $Q$… »."
+],
+example:{
+ statement:"Montrer que pour tout $n ∈ ℤ$, si $n$ est pair, alors $n^2$ est pair.",
+ lines:[
+  ["<mark>Soit</mark> $n ∈ ℤ$. <mark>Supposons que</mark> $n$ est pair.","On introduit $n$, puis on suppose l'hypothèse de l'implication."],
+  ["<mark>Par définition</mark>, il existe $k ∈ ℤ$ <mark>tel que</mark> $n = 2k$.","On traduit « pair » avec la définition — et on dit qui est $k$ !"],
+  ["<mark>Alors</mark> $n^2 = (2k)^2 = 4k^2 = 2 × (2k^2)$.","Le calcul vise la forme « 2 × un entier », exigée par la définition de « pair »."],
+  ["<mark>Or</mark> $2k^2$ est un entier <mark>car</mark> $k$ est un entier.","On vérifie que le facteur est bien un entier : c'est le point qu'on oublie le plus souvent."],
+  ["<mark>Donc</mark> $n^2$ est pair. ∎","On retombe sur la définition de « pair » : l'implication est démontrée."]
+ ]
+},
+cloze:[{
+ title:"Transitivité de la divisibilité",
+ statement:"Soient $a$, $b$, $c$ trois entiers. Montrer : si $a$ divise $b$ et $b$ divise $c$, alors $a$ divise $c$.",
+ text:"[[b1]] que $a$ divise $b$ et que $b$ divise $c$.\nPar [[b2]] de la divisibilité, il existe $k ∈ ℤ$ tel que $b = ak$ et il existe $l ∈ ℤ$ tel que $c = bl$.\n[[b3]], $c = bl = $ [[b4]] $= a(kl)$.\nOr $kl$ est un entier, [[b5]] $a$ divise $c$. ∎",
+ blanks:{
+  b1:{a:["supposons","on suppose"],h:"Un verbe qui pose l'hypothèse de l'implication."},
+  b2:{a:["définition"],h:"Le mot du cours qui transforme « $a$ divise $b$ » en « $b = ak$ »."},
+  b3:{a:["alors","donc","ainsi","on a alors","on en déduit que"],h:"Un connecteur qui introduit la conséquence."},
+  b4:{a:["(ak)l","akl","(ka)l"],h:"Remplace $b$ par $ak$, avec des parenthèses."},
+  b5:{a:["donc","ainsi","d'où","on en déduit que","on en conclut que","ce qui prouve que"],h:"Un connecteur de déduction : on tire la conclusion."}
+ },
+ extra:["soit","hypothèse","or","(a+k)l"]
+}],
+qcm:[
+ {q:"Pour démontrer « si $n$ est impair, alors $n + 1$ est pair », on commence par :",
+  o:["« Supposons que $n + 1$ est pair. »","« Soit $n ∈ ℤ$ impair. Il existe $k ∈ ℤ$ tel que $n = 2k + 1$. »","« Prenons $n = 3$ : $3 + 1 = 4$ est pair. »"],a:1,
+  ex:"On suppose l'hypothèse ($n$ impair) et on la traduit avec la définition. Supposer la conclusion est une erreur de logique ; un exemple ne prouve rien."},
+ {q:"Quelle formulation traduit correctement l'hypothèse « $n$ est pair » ?",
+  o:["« On pose $n = 2k$. »","« Il existe $k ∈ ℤ$ tel que $n = 2k$. »","« $n = 2k$ avec $k$ pair. »"],a:1,
+  ex:"La définition garantit l'existence d'un <b>entier</b> $k$ : il faut le dire. Écrire « $k$ pair » ajoute une condition fausse en général."},
+ {q:"On veut prouver « $P ⇔ Q$ ». Comment rédiger correctement ?",
+  o:["Supposer $P$, démontrer $Q$, et c'est fini.","Démontrer $P$, puis démontrer $Q$.","Démontrer « $P ⇒ Q$ » puis « $Q ⇒ P$ », en annonçant (⇒) et (⇐)."],a:2,
+  ex:"Une équivalence, ce sont deux implications. Démontrer $P$ et $Q$ séparément ne dit rien sur le lien entre elles."},
+ {q:"Un élève part de la conclusion : « On veut $n^2 = 2m$, donc… » puis remonte vers l'hypothèse. Pourquoi est-ce risqué ?",
+  o:["Ce n'est pas risqué, c'est la méthode standard.","On suppose ce qu'on veut démontrer : sans équivalences justifiées, ce n'est pas une preuve.","Parce qu'il faut toujours commencer par un exemple."],a:1,
+  ex:"Au brouillon, on peut partir de la fin pour chercher. Dans la rédaction, on part des hypothèses et on avance vers la conclusion."}
+],
+pits:[
+ {bad:"« $n = 2k$ donc $n^2 = 4k^2$ » (d'où sort $k$ ?)",good:"« Il existe $k ∈ ℤ$ tel que $n = 2k$, donc $n^2 = 4k^2$. »",why:"Chaque objet doit être introduit, avec sa nature (ici : un entier)."},
+ {bad:"« Je veux $n^2 = 2m$, donc… » (on part de la conclusion)",good:"« Supposons $n$ pair… on obtient $n^2 = 2 × (2k^2)$. Donc $n^2$ est pair. »",why:"On ne peut pas utiliser ce qu'on cherche à démontrer."},
+ {bad:"Démontrer seulement « $P ⇒ Q$ » pour une équivalence",good:"« (⇒) … » puis « (⇐) … »",why:"Une équivalence demande les deux sens, annoncés séparément."}
+]
+});
+
+TECHS.push({
+id:"cas",nav:"Disjonction de cas",icon:"∨",
+title:"La disjonction de cas",
+lead:"Quand la situation se scinde naturellement, on traite chaque cas séparément — sans en oublier.",
+principle:[
+ "Quand une propriété dépend d'une situation qui se scinde — <b>pair / impair</b>, <b>signe</b> de $x$, reste d'une division euclidienne — on traite <b>chaque cas séparément</b>, avec l'argument qui lui convient.",
+ "Seule exigence : les cas doivent être <b>exhaustifs</b> (rien n'est oublié). Ils n'ont pas besoin d'être disjoints, mais c'est plus propre."
+],
+skeleton:[
+ "Annoncer la distinction : « Distinguons deux cas selon … ».",
+ "Justifier qu'elle est exhaustive : « (tout entier est pair ou impair) ».",
+ "<u>Cas 1</u> : « Supposons … », puis démontrer la conclusion.",
+ "<u>Cas 2</u> : « Supposons … », puis démontrer la conclusion.",
+ "<u>Conclure</u> : « Dans tous les cas, … ».",
+],
+example:{
+ statement:"Montrer que pour tout entier $n$, $n(n+1)$ est pair.",
+ lines:[
+  ["<mark>Soit</mark> $n ∈ ℤ$. <mark>Distinguons deux cas</mark> selon la parité de $n$.","On annonce le plan. Tout entier est pair ou impair : les deux cas couvrent tout."],
+  ["<mark>Cas 1</mark> : $n$ est pair. <mark>Alors</mark> $n = 2k$ avec $k ∈ ℤ$, <mark>donc</mark> $n(n+1) = 2 × k(n+1)$, qui est pair.","Dans ce cas, c'est le facteur $n$ qui fournit le 2."],
+  ["<mark>Cas 2</mark> : $n$ est impair. <mark>Alors</mark> $n = 2k + 1$, <mark>donc</mark> $n + 1 = 2(k+1)$ <mark>et</mark> $n(n+1) = 2 × n(k+1)$, qui est pair.","Ici c'est $n+1$ qui fournit le 2. Chaque cas a son propre argument : c'est tout l'intérêt de la méthode."],
+  ["<mark>Dans les deux cas</mark>, $n(n+1)$ est pair. ∎","On rassemble : la conclusion vaut quelle que soit la situation."]
+ ]
+},
+cloze:[{
+ title:"$n^3 - n$ est divisible par 3",
+ statement:"Montrer que pour tout entier $n$, $n^3 - n$ est divisible par 3.",
+ text:"On factorise : $n^3 - n = (n-1) × n × (n+1)$.\nPar division euclidienne de $n$ par 3, il existe $k ∈ ℤ$ tel que $n = 3k$, ou $n = 3k + 1$, ou $n = 3k + 2$. Ces trois cas sont [[b1]] : le reste d'une division par 3 vaut 0, 1 ou 2.\nCas 1 : si $n = 3k$, alors $n$ est un multiple de 3, donc $n^3 - n$ aussi.\nCas 2 : si $n = 3k + 1$, alors $n - 1 = $ [[b2]], donc $n - 1$ est un multiple de 3.\nCas 3 : si $n = 3k + 2$, alors $n + 1 = $ [[b3]], donc $n + 1$ est un multiple de 3.\n[[b4]], l'un des trois facteurs est un multiple de 3 : $n^3 - n$ est divisible par 3. ∎",
+ blanks:{
+  b1:{a:["exhaustifs","exhaustif","complets","disjoints","suffisants"],h:"Ils couvrent toutes les possibilités : un mot en « ex… »."},
+  b2:{a:["3k"],h:"Retire 1 à $3k + 1$."},
+  b3:{a:["3(k+1)","3k+3"],h:"Ajoute 1 à $3k + 2$, puis mets 3 en facteur."},
+  b4:{a:["dans tous les cas","dans chacun des cas","dans les trois cas","quel que soit le cas","dans tous les cas de figure"],h:"L'expression qui rassemble les trois cas (« … tous les … »)."}
+ },
+ extra:["exclusifs","3(k-1)"]
+}],
+qcm:[
+ {q:"Pour raisonner sur le signe d'un réel $x$ quelconque, quelle disjonction de cas est correcte ?",
+  o:["« $x > 0$ ou $x < 0$ »","« $x ≥ 0$ ou $x < 0$ »","« $x ≥ 1$ ou $x ≤ -1$ »"],a:1,
+  ex:"La première oublie $x = 0$ ; la troisième oublie tous les réels entre −1 et 1. Seule la deuxième couvre ℝ."},
+ {q:"Qu'est-ce qui est indispensable dans une disjonction de cas ?",
+  o:["Que chaque cas soit très court.","Que les cas soient exhaustifs : ils couvrent toutes les possibilités.","Que le premier cas suffise à conclure."],a:1,
+  ex:"Si un cas est oublié, la preuve a un trou. Les cas n'ont pas à être disjoints, mais ils doivent tout couvrir."},
+ {q:"Quelle phrase termine correctement une disjonction de cas ?",
+  o:["« Le cas 1 est vrai, donc c'est fini. »","« On a traité un cas, c'est suffisant. »","« Dans tous les cas, $n(n+1)$ est pair. »"],a:2,
+  ex:"Après avoir traité chaque cas, on rassemble : « dans tous les cas » (ou « dans les deux cas »)."},
+ {q:"Pour un entier $n$ quelconque, laquelle de ces disjonctions n'est <b>pas</b> valide ?",
+  o:["« $n$ est pair ou $n$ est impair »","« $n$ est pair ou $n$ est multiple de 3 »","« $n = 3k$, ou $n = 3k+1$, ou $n = 3k+2$ »"],a:1,
+  ex:"5 n'est ni pair ni multiple de 3 : les cas ne sont pas exhaustifs. Les deux autres couvrent tous les entiers."}
+],
+pits:[
+ {bad:"« Si $x > 0$ … Si $x < 0$ … » (et $x = 0$ ?)",good:"« Si $x ≥ 0$ … Si $x < 0$ … »",why:"Vérifie toujours que les cas couvrent tout, en particulier les valeurs « frontières »."},
+ {bad:"Traiter le cas 1 puis écrire « donc c'est démontré »",good:"Traiter chaque cas, puis « Dans tous les cas, … »",why:"Une propriété n'est établie que lorsque tous les cas sont réglés."}
+]
+});
+
+TECHS.push({
+id:"contraposee",nav:"Contraposée",icon:"¬",
+title:"Le raisonnement par contraposée",
+lead:"Démontrer « $P ⇒ Q$ » en démontrant « non $Q$ ⇒ non $P$ » : parfois bien plus facile.",
+principle:[
+ "Pour démontrer « $P ⇒ Q$ », on démontre l'implication équivalente <b>« non $Q$ ⇒ non $P$ »</b>. C'est utile quand la négation de $Q$ donne une information plus exploitable que $P$ (« n'est pas pair » = « est impair », « n'est pas nul »…).",
+ "L'essentiel de la rédaction : <b>écrire la contraposée en toutes lettres</b> avant de la démontrer, et ne pas la confondre avec la réciproque."
+],
+skeleton:[
+ "Annoncer : « Montrons la contraposée : si non $Q$, alors non $P$. »",
+ "« Supposons non $Q$. » et traduire avec les définitions.",
+ "Enchaîner les déductions jusqu'à obtenir non $P$.",
+ "Conclure : « Par contraposition, si $P$ alors $Q$. »"
+],
+extras:[{title:"Ne pas confondre",html:
+ "<div class='tbl-wrap'><table class='tbl'><thead><tr><th>Nom</th><th>Écriture</th><th>Équivalente à $P ⇒ Q$ ?</th></tr></thead><tbody>"+
+ "<tr><td>Implication</td><td>$P ⇒ Q$</td><td>—</td></tr>"+
+ "<tr><td>Réciproque</td><td>$Q ⇒ P$</td><td><span class='no'>non</span></td></tr>"+
+ "<tr><td>Inverse</td><td>non $P$ ⇒ non $Q$</td><td><span class='no'>non</span></td></tr>"+
+ "<tr><td>Contraposée</td><td>non $Q$ ⇒ non $P$</td><td><span class='yes'>oui</span></td></tr>"+
+ "</tbody></table></div>"}],
+example:{
+ statement:"Montrer que pour tout $n ∈ ℤ$, si $n^2$ est pair, alors $n$ est pair.",
+ lines:[
+  ["<mark>Procédons par contraposition</mark> : montrons que si $n$ n'est pas pair, alors $n^2$ n'est pas pair.","On écrit la contraposée noir sur blanc : le lecteur sait exactement ce qu'on va prouver."],
+  ["<mark>Soit</mark> $n ∈ ℤ$ impair. Il existe $k ∈ ℤ$ tel que $n = 2k + 1$.","« Pas pair » signifie « impair » : la négation devient exploitable. C'est tout l'intérêt ici."],
+  ["<mark>Alors</mark> $n^2 = 4k^2 + 4k + 1 = 2(2k^2 + 2k) + 1$.","On cherche la forme « 2 × un entier + 1 »."],
+  ["<mark>Or</mark> $2k^2 + 2k$ est un entier, <mark>donc</mark> $n^2$ est impair, c'est-à-dire non pair.","On termine bien sur « non $P$ » : $n^2$ n'est pas pair."],
+  ["<mark>Par contraposition</mark>, si $n^2$ est pair, alors $n$ est pair. ∎","On revient à l'énoncé de départ."]
+ ]
+},
+cloze:[{
+ title:"Une somme et deux réels",
+ statement:"Montrer que pour tous réels $a$ et $b$ : si $a + b ≥ 2$, alors $a ≥ 1$ ou $b ≥ 1$.",
+ text:"Montrons la [[b1]] : si $a < 1$ [[b2]] $b < 1$, alors $a + b < 2$.\nSupposons donc $a < 1$ et $b < 1$. En [[b3]] ces deux inégalités, on obtient $a + b < 1 + 1 = 2$.\nOn a ainsi démontré la contraposée, ce qui [[b4]] l'implication de départ. ∎",
+ blanks:{
+  b1:{a:["contraposée","contraposition"],h:"Le nom de l'implication « non $Q$ ⇒ non $P$ »."},
+  b2:{a:["et"],h:"La négation de « $A$ ou $B$ » est « non $A$ … non $B$ »."},
+  b3:{a:["additionnant","ajoutant","sommant","faisant la somme de"],h:"On ajoute les deux inégalités membre à membre (verbe en -ant)."},
+  b4:{a:["prouve","démontre","établit","justifie","valide"],h:"Un verbe : la contraposée équivalente établit l'implication."}
+ },
+ extra:["réciproque","ou","multipliant","contredit"]
+}],
+qcm:[
+ {q:"Quelle est la contraposée de « si $n$ est multiple de 6, alors $n$ est pair » ?",
+  o:["« Si $n$ est pair, alors $n$ est multiple de 6. »","« Si $n$ n'est pas multiple de 6, alors $n$ n'est pas pair. »","« Si $n$ n'est pas pair, alors $n$ n'est pas multiple de 6. »"],a:2,
+  ex:"On <b>inverse et on nie</b> : non $Q$ ⇒ non $P$. La première est la réciproque (fausse ici), la deuxième l'inverse (fausse aussi : 4 n'est pas multiple de 6 mais est pair)."},
+ {q:"Pour montrer « si $n^2$ est pair alors $n$ est pair » par contraposée, on commence par :",
+  o:["« Supposons $n$ pair. Montrons que $n^2$ est pair. »","« Supposons $n^2$ impair. Montrons que $n$ est pair. »","« Supposons $n$ impair. Montrons que $n^2$ est impair. »"],a:2,
+  ex:"On suppose non $Q$ ($n$ impair) et on montre non $P$ ($n^2$ impair). La première option démontre la réciproque de l'énoncé."},
+ {q:"Quelle est la négation de « $a ≥ 1$ ou $b ≥ 1$ » ?",
+  o:["« $a < 1$ et $b < 1$ »","« $a < 1$ ou $b < 1$ »","« $a ≥ 1$ et $b ≥ 1$ »"],a:0,
+  ex:"La négation de « ou » est « et », et chaque inégalité est niée : $≥$ devient $<$."},
+ {q:"Quelle conclusion clôt correctement une preuve par contraposée de « $P ⇒ Q$ » ?",
+  o:["« Donc $P$ est vraie. »","« Donc la réciproque est vraie. »","« Par contraposition, l'implication $P ⇒ Q$ est démontrée. »"],a:2,
+  ex:"On a prouvé « non $Q$ ⇒ non $P$ », équivalente à l'implication de départ : c'est elle qu'on annonce démontrée."}
+],
+pits:[
+ {bad:"Pour « si $n^2$ pair alors $n$ pair » : « Montrons que si $n$ est pair, alors $n^2$ est pair »",good:"« Montrons que si $n$ est impair, alors $n^2$ est impair »",why:"Le premier énoncé est la réciproque, pas la contraposée."},
+ {bad:"Nier « $A$ ou $B$ » par « non $A$ ou non $B$ »",good:"« non $A$ <b>et</b> non $B$ »",why:"Les lois de De Morgan : la négation change « ou » en « et » (et inversement)."},
+ {bad:"Faire la preuve sans dire qu'on raisonne par contraposée",good:"« Procédons par contraposition : montrons que … »",why:"Sans annonce, le lecteur croit que tu démontres l'implication directe."}
+]
+});
+
+TECHS.push({
+id:"absurde",nav:"Absurde",icon:"⊥",
+title:"Le raisonnement par l'absurde",
+lead:"Supposer le contraire de ce qu'on veut prouver, et aboutir à une contradiction.",
+principle:[
+ "Pour démontrer une affirmation $A$, on suppose <b>son contraire</b> (non $A$) et on en déduit une <b>contradiction</b> : quelque chose de faux (« $1 = 0$ », un entier à la fois pair et impair, une hypothèse contredite…). Un raisonnement correct ne peut pas mener à du faux : c'est que l'hypothèse « non $A$ » était fausse, donc $A$ est vraie.",
+ "Très efficace pour les énoncés de <b>non-existence</b>, d'<b>irrationalité</b> ou d'<b>infinité</b>. Le point critique : bien écrire la <b>négation</b> (« pour tout » devient « il existe », « et » devient « ou »…). Pour « $P ⇒ Q$ » par l'absurde, on suppose « $P$ et non $Q$ »."
+],
+skeleton:[
+ "« Raisonnons par l'absurde et supposons que [non $A$]. » (négation soigneusement écrite)",
+ "Déduire des conséquences en utilisant cette hypothèse.",
+ "Repérer et <b>écrire</b> la contradiction : « Or … : c'est absurde. »",
+ "Conclure : « Notre hypothèse est fausse, donc $A$. »"
+],
+example:{
+ statement:"Montrer que $√{2}$ est irrationnel.",
+ lines:[
+  ["<mark>Raisonnons par l'absurde</mark> et <mark>supposons que</mark> $√{2}$ est rationnel.","On écrit la négation : « irrationnel » devient « rationnel »."],
+  ["<mark>Il existe alors</mark> deux entiers $p$ et $q ≥ 1$, <mark>premiers entre eux</mark>, tels que $√{2} = p/q$.","Le détail crucial : une fraction irréductible. C'est elle qu'on va contredire."],
+  ["<mark>En élevant au carré</mark>, $2q^2 = p^2$. <mark>Donc</mark> $p^2$ est pair, <mark>donc</mark> $p$ est pair (résultat démontré par contraposition) ; on écrit $p = 2m$.","On cite un résultat connu au lieu de le refaire : c'est celui du chapitre précédent."],
+  ["<mark>Alors</mark> $2q^2 = 4m^2$, <mark>d'où</mark> $q^2 = 2m^2$, <mark>donc</mark> $q$ est pair.","Même argument, cette fois pour $q$."],
+  ["<mark>Ainsi</mark> $p$ et $q$ sont tous deux pairs : ils ne sont pas premiers entre eux. <mark>Contradiction</mark> avec l'hypothèse.","On nomme la contradiction explicitement : c'est ce que le correcteur cherche."],
+  ["<mark>Donc</mark> l'hypothèse de départ est fausse : $√{2}$ est irrationnel. ∎","On conclut sur l'énoncé initial, pas sur l'hypothèse."]
+ ]
+},
+cloze:[
+{
+ title:"Il y a une infinité de nombres premiers",
+ statement:"Démontrer qu'il existe une infinité de nombres premiers (Euclide).",
+ text:"Raisonnons [[b1]] et supposons qu'il y ait un nombre [[b2]] de nombres premiers, notés $p_1, p_2, …, p_r$.\nPosons $N = p_1 p_2 ⋯ p_r + 1$. Comme $N ≥ 2$, il admet un diviseur premier $p$, qui est donc l'un des $p_i$.\nAlors $p$ divise $p_1 p_2 ⋯ p_r$ et $p$ divise $N$, donc $p$ divise $N - p_1 p_2 ⋯ p_r = $ [[b3]].\nOr un nombre premier ne divise pas 1 : c'est une [[b4]].\nNotre hypothèse de départ est donc [[b5]] : il existe une infinité de nombres premiers. ∎",
+ blanks:{
+  b1:{a:["par l'absurde","par absurde","par labsurde"],h:"Le nom de la méthode (« par … »)."},
+  b2:{a:["fini","fini de"],h:"Le contraire de « infini »."},
+  b3:{a:["1"],h:"Calcule $N - p_1 p_2 ⋯ p_r$."},
+  b4:{a:["contradiction","absurdité"],h:"Ce qu'on cherche à obtenir dans un raisonnement par l'absurde."},
+  b5:{a:["fausse","absurde","erronée","incorrecte","impossible"],h:"Un adjectif : l'hypothèse ne peut pas être vraie."}
+ },
+ extra:["infini","2","récurrence"]
+},
+{
+ title:"Pas de plus petit réel strictement positif",
+ statement:"Montrer qu'il n'existe pas de plus petit réel strictement positif.",
+ text:"[[b1]] par l'absurde qu'il existe un plus petit réel strictement positif $m$. On a alors $m > 0$.\nConsidérons $m/2$ : on a $m/2 > 0$ et $m/2 < m$ car [[b2]].\nLe réel $m/2$ est donc strictement positif et strictement plus petit que $m$, ce qui [[b3]] la définition de $m$.\nCette [[b4]] montre que notre hypothèse est fausse : il n'existe pas de plus petit réel strictement positif. ∎",
+ blanks:{
+  b1:{a:["supposons","on suppose"],h:"Un verbe qui ouvre la preuve par l'absurde."},
+  b2:{a:["m>0","m est strictement positif","m strictement positif","m est positif","m positif"],h:"Ce qu'on sait de $m$ : on divise un nombre positif par 2."},
+  b3:{a:["contredit","contredirait","est en contradiction avec"],h:"Un verbe : cela va contre la définition de $m$."},
+  b4:{a:["contradiction","absurdité"],h:"Le nom de ce qu'on vient d'obtenir."}
+ },
+ extra:["confirme","récurrence"]
+}],
+qcm:[
+ {q:"Pour démontrer « $√{2}$ est irrationnel » par l'absurde, on commence par supposer :",
+  o:["que $√{2}$ est irrationnel","que $√{2}$ est un entier","que $√{2}$ est rationnel"],a:2,
+  ex:"On suppose le <b>contraire</b> de ce qu'on veut prouver : « irrationnel » a pour négation « rationnel »."},
+ {q:"Pour démontrer « pour tout $n ∈ ℕ$, $n^2 ≠ 2$ » par l'absurde, on commence par :",
+  o:["« Supposons que pour tout $n ∈ ℕ$, $n^2 = 2$. »","« Supposons qu'il existe $n ∈ ℕ$ tel que $n^2 = 2$. »","« Supposons que $n^2 ≠ 2$ pour un certain $n$. »"],a:1,
+  ex:"La négation de « ∀ $n$, $n^2 ≠ 2$ » est « ∃ $n$, $n^2 = 2$ » : le « pour tout » devient « il existe » et la relation est niée."},
+ {q:"Que doit-on obtenir pour conclure une preuve par l'absurde ?",
+  o:["Un calcul qui donne le résultat attendu.","Une contradiction : une affirmation fausse ou incompatible avec une hypothèse.","Un exemple qui vérifie l'hypothèse."],a:1,
+  ex:"C'est la contradiction qui invalide l'hypothèse « non $A$ ». Sans elle, la preuve n'est pas terminée."},
+ {q:"Quelle est la bonne conclusion d'une preuve par l'absurde de « $√{2}$ est irrationnel » ?",
+  o:["« On a donc montré que $√{2}$ est rationnel. »","« C'est absurde, donc l'énoncé est faux. »","« Cette contradiction montre que l'hypothèse est fausse : $√{2}$ est irrationnel. »"],a:2,
+  ex:"L'absurdité invalide l'hypothèse (« rationnel »), pas l'énoncé de départ, qui se trouve donc démontré."},
+ {q:"Pour démontrer « $P ⇒ Q$ » <b>par l'absurde</b> (et non par contraposée), on suppose :",
+  o:["« $P$ et non $Q$ »","« non $P$ et $Q$ »","« non $Q$ ⇒ non $P$ »"],a:0,
+  ex:"La négation de « $P ⇒ Q$ » est « $P$ et non $Q$ ». Supposer seulement non $Q$ et démontrer non $P$, c'est la contraposée."}
+],
+pits:[
+ {bad:"« Supposons que $√{2}$ est irrationnel… »",good:"« Supposons que $√{2}$ est rationnel… »",why:"On suppose le contraire de la conclusion, jamais la conclusion."},
+ {bad:"« … on trouve donc une contradiction. » (sans la dire)",good:"« … $p$ et $q$ sont pairs, ce qui contredit le fait qu'ils sont premiers entre eux. »",why:"Écris précisément d'où vient la contradiction."},
+ {bad:"« C'est absurde, donc l'énoncé est faux. »",good:"« L'hypothèse est fausse, donc l'énoncé est vrai. »",why:"C'est l'hypothèse de départ (le contraire) qui est écartée."}
+]
+});
+
+TECHS.push({
+id:"recurrence",nav:"Récurrence",icon:"n+1",
+title:"Le raisonnement par récurrence",
+lead:"L'effet domino : une propriété qui démarre et qui se transmet d'un rang au suivant.",
+principle:[
+ "Pour démontrer qu'une propriété $P(n)$ est vraie pour tout entier $n ≥ n_0$, on montre qu'elle <b>démarre</b> (initialisation), puis qu'elle se <b>transmet</b> d'un rang au suivant (hérédité).",
+ "L'erreur classique : supposer $P(n)$ vraie <b>pour tout $n$</b> — c'est justement ce qu'on veut démontrer ! On <b>fixe</b> un $n$ et on suppose $P(n)$ vraie pour <b>ce</b> $n$-là."
+],
+skeleton:[
+ "Poser la propriété : « Pour $n ≥ n_0$, notons $P(n)$ la propriété : « … ». »",
+ "<u>Initialisation</u> : vérifier $P(n_0)$.",
+ "<u>Hérédité</u> : « Soit $n ≥ n_0$ fixé tel que $P(n)$ est vraie. Montrons $P(n+1)$. » Le calcul doit <b>utiliser</b> l'hypothèse de récurrence.",
+ "<u>Conclusion</u> : « Par récurrence, $P(n)$ est vraie pour tout $n ≥ n_0$. »"
+],
+extras:[{title:"Quand une seule hypothèse ne suffit pas",html:
+ "<p>Si $P(n+1)$ dépend de <b>plusieurs</b> rangs précédents (par exemple $u_{n+2} = u_{n+1} + u_n$), on utilise une récurrence <b>forte</b> ou <b>double</b> :</p>"+
+ "<p class='note'>« Soit $n ≥ n_0$. Supposons que $P(k)$ est vraie pour tout entier $k$ tel que $n_0 ≤ k ≤ n$. Montrons $P(n+1)$. »</p>"+
+ "<p>Attention : il faut alors parfois <b>plusieurs initialisations</b> (deux rangs pour une récurrence double).</p>"}],
+example:{
+ statement:"Montrer que pour tout $n ∈ ℕ^{*}$, $∑_{k=1}^{n} k = n(n+1)/2$.",
+ lines:[
+  ["Pour $n ∈ ℕ^{*}$, <mark>notons</mark> $P(n)$ la propriété : « $∑_{k=1}^{n} k = n(n+1)/2$ ».","On écrit précisément $P(n)$ : c'est elle qu'on va transmettre de rang en rang."],
+  ["<mark>Initialisation</mark> : pour $n = 1$, $∑_{k=1}^{1} k = 1$ <mark>et</mark> $1 × 2/2 = 1$. <mark>Donc</mark> $P(1)$ est vraie.","On vérifie au premier rang en calculant les deux côtés."],
+  ["<mark>Hérédité</mark> : <mark>soit</mark> $n ∈ ℕ^{*}$ <mark>fixé tel que</mark> $P(n)$ est vraie. <mark>Montrons que</mark> $P(n+1)$ est vraie, c'est-à-dire que $∑_{k=1}^{n+1} k = (n+1)(n+2)/2$.","On fixe $n$ : l'hypothèse de récurrence vaut pour ce $n$ seulement. On écrit ce qu'il faudra obtenir au rang $n+1$."],
+  ["<mark>On a</mark> $∑_{k=1}^{n+1} k = ∑_{k=1}^{n} k + (n+1) = n(n+1)/2 + (n+1)$ <mark>par hypothèse de récurrence</mark>, <mark>donc</mark> $∑_{k=1}^{n+1} k = (n+1)(n/2 + 1) = (n+1)(n+2)/2$.","L'hypothèse de récurrence est utilisée ici, et on le dit. Sans elle, ce n'est pas une récurrence."],
+  ["<mark>Conclusion</mark> : $P(1)$ est vraie et $P(n) ⇒ P(n+1)$ pour tout $n ≥ 1$, <mark>donc par récurrence</mark>, $P(n)$ est vraie pour tout $n ∈ ℕ^{*}$. ∎","On cite les deux ingrédients et on nomme la méthode."]
+ ]
+},
+cloze:[
+{
+ title:"$4^n - 1$ est divisible par 3",
+ statement:"Montrer que pour tout $n ∈ ℕ$, $4^n - 1$ est divisible par 3.",
+ text:"Pour $n ∈ ℕ$, notons $P(n)$ : « $4^n - 1$ est divisible par 3 ».\n[[b1]] : pour $n = 0$, $4^0 - 1 = 0 = 3 × 0$, donc $P(0)$ est vraie.\n[[b2]] : soit $n ∈ ℕ$ [[b3]] tel que $P(n)$ est vraie. Il existe donc $m ∈ ℤ$ tel que $4^n - 1 = 3m$. Montrons $P(n+1)$. On a $4^{n+1} - 1 = 4 × 4^n - 1 = 4(4^n - 1) + 3 = 4 × 3m + 3 = $ [[b4]]. Comme $4m + 1$ est un entier, $4^{n+1} - 1$ est divisible par 3 : $P(n+1)$ est vraie.\n[[b5]] : $P(0)$ est vraie et $P(n) ⇒ P(n+1)$ pour tout $n$, donc par [[b6]], $P(n)$ est vraie pour tout $n ∈ ℕ$. ∎",
+ blanks:{
+  b1:{a:["initialisation"],h:"Le nom de la première étape : on vérifie le premier rang."},
+  b2:{a:["hérédité"],h:"Le nom de l'étape où l'on passe du rang $n$ au rang $n+1$."},
+  b3:{a:["fixé","quelconque","arbitraire"],h:"Un adjectif : $n$ est un entier qu'on garde en main, sans le choisir."},
+  b4:{a:["3(4m+1)","3(1+4m)"],h:"Mets 3 en facteur dans $12m + 3$."},
+  b5:{a:["conclusion"],h:"Le nom de la dernière étape."},
+  b6:{a:["récurrence"],h:"Le nom de la méthode."}
+ },
+ extra:["domino","absurde"]
+},
+{
+ title:"Une suite définie par récurrence",
+ statement:"Soit $(u_n)$ définie par $u_0 = 1$ et $u_{n+1} = 2u_n + 1$. Montrer que $u_n = 2^{n+1} - 1$ pour tout $n ∈ ℕ$.",
+ text:"<u>Initialisation</u> : $u_0 = 1$ et $2^{0+1} - 1 = $ [[b1]], donc la propriété est vraie au rang 0.\n<u>Hérédité</u> : soit $n ∈ ℕ$ tel que $u_n = 2^{n+1} - 1$ (c'est l'[[b2]] de récurrence). Alors, par [[b3]] de la suite, $u_{n+1} = 2u_n + 1 = 2(2^{n+1} - 1) + 1 = 2^{n+2} - $ [[b4]] $= 2^{(n+1)+1} - 1$. La propriété est donc vraie au rang $n+1$.\n<u>Conclusion</u> : la propriété est [[b5]] au rang 0 et [[b6]], donc elle est vraie pour tout $n ∈ ℕ$. ∎",
+ blanks:{
+  b1:{a:["1"],h:"Calcule $2^{0+1} - 1$."},
+  b2:{a:["hypothèse"],h:"L'hypothèse qu'on suppose vraie au rang $n$ s'appelle l'… de récurrence."},
+  b3:{a:["définition","construction"],h:"La suite est définie par $u_{n+1} = 2u_n + 1$ : on utilise sa … (un nom)."},
+  b4:{a:["1"],h:"Regroupe les constantes : $-2 + 1 = -1$."},
+  b5:{a:["initialisée","vraie"],h:"Un adjectif : la propriété démarre bien au rang 0."},
+  b6:{a:["héréditaire"],h:"Un adjectif : elle se transmet d'un rang au suivant."}
+ },
+ extra:["croissante","majorée"]
+}],
+qcm:[
+ {q:"Pour l'hérédité, on écrit :",
+  o:["« Supposons que $P(n)$ est vraie pour tout $n ∈ ℕ$. Montrons $P(n+1)$. »","« Soit $n ∈ ℕ$ fixé tel que $P(n)$ est vraie. Montrons que $P(n+1)$ est vraie. »","« Prenons $n = 0$ et montrons que $P(1)$ est vraie. »"],a:1,
+  ex:"On fixe <b>un</b> $n$ et on suppose $P(n)$ pour ce $n$. La première version suppose ce qu'on veut démontrer ; la troisième ne traite qu'un seul rang."},
+ {q:"Soit $P(n)$ : « $n = n + 1$ ». Elle est héréditaire (si $n = n+1$, alors $n+1 = n+2$). Pourquoi n'est-elle pas vraie pour tout $n$ ?",
+  o:["Parce que l'hérédité est fausse.","Parce qu'il faudrait une récurrence forte.","Parce qu'elle n'est pas initialisée : $P(0)$ est fausse."],a:2,
+  ex:"L'hérédité seule ne suffit pas : sans initialisation, le premier domino ne tombe jamais. Ici $P(0)$ dit $0 = 1$."},
+ {q:"Quelle conclusion est correcte ?",
+  o:["« $P(0)$ est vraie et $P$ est héréditaire, donc par récurrence $P(n)$ est vraie pour tout $n ∈ ℕ$. »","« $P(n+1)$ est vraie, donc c'est terminé. »","« $P(n)$ est vraie car $P(n)$ est vraie. »"],a:0,
+  ex:"On cite les deux ingrédients (initialisation et hérédité) et on nomme la méthode. Les deux autres phrases sont creuses ou circulaires."},
+ {q:"La suite vérifie $u_{n+2} = u_{n+1} + u_n$. Pour démontrer une propriété de $u_n$, il faut souvent :",
+  o:["supposer $P(n)$ et $P(n+1)$ (récurrence double), avec deux initialisations","supposer seulement $P(n+2)$","se passer de l'initialisation"],a:0,
+  ex:"$u_{n+2}$ dépend de deux rangs : pour montrer $P(n+2)$, on a besoin de $P(n)$ et de $P(n+1)$. Il faut donc initialiser à deux rangs ($n_0$ et $n_0+1$)."},
+ {q:"Dans l'hérédité, où intervient l'hypothèse de récurrence ?",
+  o:["Dans le calcul : on remplace une quantité au rang $n$ par ce que dit $P(n)$.","Nulle part : elle sert seulement à commencer.","Uniquement dans la conclusion."],a:0,
+  ex:"C'est le moteur de la preuve : on écrit « par hypothèse de récurrence » au moment précis où on l'utilise."}
+],
+pits:[
+ {bad:"« Supposons $P(n)$ vraie pour tout $n$. »",good:"« Soit $n$ fixé tel que $P(n)$ est vraie. »",why:"Supposer $P(n)$ pour tout $n$, c'est supposer la conclusion."},
+ {bad:"Oublier l'initialisation",good:"« Initialisation : pour $n = 0$, … donc $P(0)$ est vraie. »",why:"Sans premier domino, la chaîne ne démarre pas."},
+ {bad:"Une hérédité qui n'utilise jamais $P(n)$",good:"« … par hypothèse de récurrence, … »",why:"Si tu n'utilises pas l'hypothèse, soit la preuve est directe, soit elle est fausse."}
+]
+});
+
+TECHS.push({
+id:"analyse",nav:"Analyse-synthèse",icon:"⇄",
+title:"Analyse-synthèse",
+lead:"Pour trouver toutes les solutions, ou prouver qu'il en existe une seule : d'abord chercher, ensuite vérifier.",
+principle:[
+ "Pour <b>déterminer toutes les solutions</b> d'un problème, ou démontrer qu'un objet <b>existe et est unique</b>, on procède en deux temps.",
+ "<b>Analyse</b> : on suppose qu'une solution existe et on en déduit des conditions <em>nécessaires</em>, qui fixent les candidats possibles (c'est l'<b>unicité</b>). <b>Synthèse</b> : on vérifie que les candidats trouvés conviennent vraiment (c'est l'<b>existence</b>)."
+],
+skeleton:[
+ "<u>Analyse</u> : « Supposons que $x$ soit solution. » Déduire des conditions nécessaires jusqu'à identifier les candidats.",
+ "<u>Synthèse</u> : « Réciproquement, vérifions que … convient. » On remplace et on contrôle.",
+ "<u>Conclusion</u> : « Le problème admet une unique solution : … » (ou : l'ensemble des solutions est …)."
+],
+example:{
+ statement:"Résoudre dans ℝ l'équation $√{2x+3} = x$.",
+ lines:[
+  ["<mark>Analyse</mark> : <mark>supposons que</mark> $x$ soit solution. <mark>Alors</mark> $x = √{2x+3} ≥ 0$ <mark>et</mark>, en élevant au carré, $x^2 = 2x + 3$, <mark>soit</mark> $x^2 - 2x - 3 = 0$.","On ne fait que déduire : tout ce qu'on écrit est une condition <b>nécessaire</b>. Et on garde $x ≥ 0$ !"],
+  ["Les racines de ce trinôme sont $-1$ et $3$ ; <mark>comme</mark> $x ≥ 0$, <mark>on obtient</mark> $x = 3$.","L'analyse a produit un seul candidat : il y a au plus une solution."],
+  ["<mark>Synthèse</mark> : <mark>réciproquement</mark>, pour $x = 3$ : $√{2 × 3 + 3} = √{9} = 3$. <mark>Donc</mark> $3$ est bien solution.","On vérifie dans l'équation de départ : l'élévation au carré ne garantissait pas l'équivalence."],
+  ["<mark>Conclusion</mark> : l'équation admet une unique solution, $x = 3$.","L'analyse donne « au plus une », la synthèse « au moins une » : ensemble, existence et unicité."]
+ ]
+},
+cloze:[{
+ title:"Somme d'une fonction paire et d'une fonction impaire",
+ statement:"Montrer que toute fonction $f : ℝ → ℝ$ s'écrit de façon unique $f = g + h$ avec $g$ paire et $h$ impaire.",
+ text:"[[b1]] : supposons qu'il existe $g$ paire et $h$ impaire telles que $f = g + h$. Pour tout réel $x$ : $f(x) = g(x) + h(x)$ et $f(-x) = g(-x) + h(-x) = g(x) - h(x)$.\nEn [[b2]] ces deux égalités, on obtient $g(x) = (f(x) + f(-x))/2$ ; en les soustrayant, on obtient $h(x) = $ [[b3]].\nLes fonctions $g$ et $h$ sont donc [[b4]] déterminées par $f$ : cela prouve l'unicité.\n[[b5]] : réciproquement, posons $g(x) = (f(x) + f(-x))/2$ et $h(x) = (f(x) - f(-x))/2$. On vérifie que $g$ est paire, que $h$ est impaire et que $g + h = f$. Cela prouve l'[[b6]]. ∎",
+ blanks:{
+  b1:{a:["analyse"],h:"Le nom de la première partie : on suppose que la décomposition existe."},
+  b2:{a:["additionnant","ajoutant","sommant"],h:"On ajoute les deux égalités membre à membre."},
+  b3:{a:["(f(x)-f(-x))/2","1/2(f(x)-f(-x))","(f(x)-f(-x))1/2"],h:"Soustrais : $f(x) - f(-x) = 2h(x)$."},
+  b4:{a:["entièrement","uniquement","complètement","totalement","parfaitement"],h:"Un adverbe : rien d'autre que $f$ n'intervient."},
+  b5:{a:["synthèse"],h:"Le nom de la seconde partie : on vérifie que le candidat convient."},
+  b6:{a:["existence"],h:"L'autre moitié de « existence et unicité »."}
+ },
+ extra:["unicité","récurrence"]
+}],
+qcm:[
+ {q:"Dans la partie « analyse », on suppose :",
+  o:["que le problème n'a pas de solution","qu'une solution existe, pour en tirer des conditions nécessaires","que la solution est celle qu'on a trouvée, et on la vérifie"],a:1,
+  ex:"L'analyse part d'une solution hypothétique et en déduit ce qu'elle doit vérifier. La vérification est la synthèse."},
+ {q:"Pourquoi la synthèse est-elle indispensable ?",
+  o:["Parce que l'analyse ne donne que des conditions nécessaires : le candidat trouvé peut ne pas convenir.","Parce que l'analyse est souvent fausse.","Parce qu'il faut rallonger la copie."],a:0,
+  ex:"Exemple : en résolvant $√{2x+3} = x$ sans garder $x ≥ 0$, on trouve aussi $x = -1$, qui ne convient pas ($√{1} = 1 ≠ -1$)."},
+ {q:"Quelle phrase ouvre la synthèse ?",
+  o:["« Supposons que $x$ soit solution. »","« Raisonnons par l'absurde. »","« Réciproquement, vérifions que $x = 3$ est bien solution. »"],a:2,
+  ex:"« Réciproquement » annonce qu'on part du candidat pour vérifier qu'il convient. La première phrase ouvre l'analyse."},
+ {q:"Dans un problème d'existence et d'unicité, l'analyse démontre ……, et la synthèse démontre …… :",
+  o:["l'unicité ; l'existence","l'existence ; l'unicité","l'unicité ; l'unicité"],a:0,
+  ex:"L'analyse restreint à au plus un candidat (unicité) ; la synthèse prouve que ce candidat convient (existence)."}
+],
+pits:[
+ {bad:"S'arrêter après l'analyse : « Donc $S = {−1 ; 3}$ »",good:"« Réciproquement, on vérifie que chaque candidat convient. »",why:"L'analyse donne des candidats, pas des solutions."},
+ {bad:"Écrire des équivalences (⇔) non justifiées après avoir élevé au carré",good:"Raisonner par implications (analyse), puis vérifier (synthèse)",why:"Élever au carré perd de l'information : on ne peut pas revenir en arrière."},
+ {bad:"Ne pas conclure sur l'existence et l'unicité",good:"« Le problème admet une unique solution : … »",why:"La conclusion dit exactement ce que l'analyse et la synthèse ont établi."}
+]
+});
+
+TECHS.push({
+id:"contre",nav:"Contre-exemple",icon:"∄",
+title:"Contre-exemples et négations",
+lead:"Réfuter un « pour tout » avec un seul cas, et savoir écrire proprement le contraire d'une phrase.",
+principle:[
+ "Pour montrer qu'une propriété « pour tout $x$, $P(x)$ » est <b>fausse</b>, il suffit d'exhiber <b>un seul</b> $x$ pour lequel $P(x)$ est fausse : un <b>contre-exemple</b>. Inversement, aucun nombre d'exemples ne suffit à démontrer une propriété universelle.",
+ "Ce qui compte : bien écrire la <b>négation</b>. Celle de « pour tout $x$, $P(x)$ » est « il existe $x$ tel que non $P(x)$ »."
+],
+skeleton:[
+ "Écrire la négation : « Cherchons $x$ tel que non $P(x)$. »",
+ "Choisir <b>explicitement</b> un candidat : « Prenons $x = …$. »",
+ "Calculer et vérifier que la propriété échoue.",
+ "Conclure : « Ainsi la propriété est fausse ; $x = …$ est un contre-exemple. »"
+],
+extras:[{title:"Démontrer ou réfuter : la symétrie",html:
+ "<div class='tbl-wrap'><table class='tbl'><thead><tr><th>Énoncé</th><th>Pour le démontrer</th><th>Pour le réfuter</th></tr></thead><tbody>"+
+ "<tr><td>« Pour tout $x$, $P(x)$ »</td><td>« Soit $x$ quelconque… » (un exemple ne suffit jamais)</td><td>Un seul <b>contre-exemple</b></td></tr>"+
+ "<tr><td>« Il existe $x$ tel que $P(x)$ »</td><td>Un seul <b>exemple</b> : « Prenons $x = …$ »</td><td>« Soit $x$ quelconque, montrons non $P(x)$ »</td></tr>"+
+ "</tbody></table></div>"}],
+example:{
+ statement:"Montrer que la propriété « pour tout $n ∈ ℕ$, $n^2 + n + 41$ est premier » est fausse.",
+ lines:[
+  ["<mark>Cherchons</mark> $n ∈ ℕ$ <mark>tel que</mark> $n^2 + n + 41$ ne soit pas premier.","On écrit la négation de « pour tout $n$, … » : il existe un $n$ pour lequel c'est faux."],
+  ["<mark>Prenons</mark> $n = 40$.","Le candidat est donné explicitement. Astuce : $n(n+1) + 41$ avec $n = 40$ donne $40 × 41 + 41 = 41 × 41$."],
+  ["<mark>Alors</mark> $n^2 + n + 41 = 1600 + 40 + 41 = 1681 = 41 × 41$.","Un calcul que le lecteur refait en dix secondes."],
+  ["<mark>Donc</mark> $1681$ n'est pas premier : il est divisible par 41.","On dit précisément pourquoi le nombre n'est pas premier."],
+  ["<mark>Ainsi</mark>, la propriété est fausse : $n = 40$ est un <mark>contre-exemple</mark>. ∎","Et pourtant la formule donne un nombre premier pour $n = 0, 1, …, 39$ : quarante réussites ne prouvent rien !"]
+ ]
+},
+cloze:[
+{
+ title:"Réfuter « pour tout »",
+ statement:"Réfuter : « pour tout réel $x$, $x^2 > x$ ».",
+ text:"Pour montrer qu'une propriété « pour tout » est [[b1]], il suffit d'exhiber un [[b2]].\nPrenons $x = 1/2$. On a $x^2 = 1/4$, et l'inégalité $1/4 > 1/2$ est [[b3]].\nAinsi la propriété « pour tout réel $x$, $x^2 > x$ » est [[b4]]. ∎",
+ blanks:{
+  b1:{a:["fausse"],h:"Le contraire de « vraie »."},
+  b2:{a:["contre-exemple","contre exemple","contreexemple"],h:"Un exemple qui contredit la propriété (un mot composé)."},
+  b3:{a:["fausse","fausse","faux"],h:"Le contraire de « vraie »."},
+  b4:{a:["fausse"],h:"Le verdict final sur la propriété."}
+ },
+ extra:["vraie","démonstration"]
+},
+{
+ title:"Écrire des négations",
+ statement:"Écrire correctement le contraire de chaque phrase.",
+ text:"La négation de « pour tout $x ∈ ℝ$, $x^2 ≥ x$ » est : « [[b1]] $x ∈ ℝ$ tel que $x^2$ [[b2]] $x$ ».\nLa négation de « $a ≥ 1$ ou $b ≥ 1$ » est : « $a < 1$ [[b3]] $b < 1$ ».\nLa négation de « il existe $n ∈ ℕ$ tel que $n^2 = 2$ » est : « [[b4]] $n ∈ ℕ$, $n^2 ≠ 2$ ».",
+ blanks:{
+  b1:{a:["il existe","∃"],h:"Le « pour tout » devient un « … »."},
+  b2:{a:["<","est strictement inférieur à","strictement inférieur à"],h:"La négation de $≥$ est une inégalité <b>stricte</b> : quel symbole ?"},
+  b3:{a:["et","∧"],h:"La négation de « ou » est …"},
+  b4:{a:["pour tout","quel que soit","quelque soit","∀"],h:"Le « il existe » devient un « … »."}
+ },
+ extra:["ou","pour un certain"]
+}],
+qcm:[
+ {q:"Pour réfuter « tout nombre premier est impair », il suffit d'écrire :",
+  o:["« 3, 5 et 7 sont premiers et impairs. »","« Soit $p$ premier quelconque. Alors $p$ est pair. »","« 2 est premier et pair : c'est un contre-exemple. »"],a:2,
+  ex:"Un seul contre-exemple suffit. Plusieurs exemples qui « marchent » ne prouvent rien, et la deuxième phrase est fausse."},
+ {q:"Une propriété est vérifiée pour $n = 0, 1, 2, 3, 4$. Que peut-on en conclure ?",
+  o:["Elle est démontrée pour tout $n$.","Rien de définitif : c'est au mieux une conjecture.","Elle est fausse."],a:1,
+  ex:"Des cas particuliers ne prouvent rien. Souviens-toi de $n^2 + n + 41$ : premier pour $n = 0, …, 39$, mais pas pour $n = 40$."},
+ {q:"Quelle est la négation de « pour tout réel $x$, $x^2 ≥ x$ » ?",
+  o:["« il existe un réel $x$ tel que $x^2 < x$ »","« pour tout réel $x$, $x^2 < x$ »","« il existe un réel $x$ tel que $x^2 ≤ x$ »"],a:0,
+  ex:"Le « pour tout » devient « il existe » <b>et</b> l'inégalité est niée : $≥$ devient $<$ (pas $≤$)."},
+ {q:"Pour démontrer que « il existe $x ∈ ℝ$ tel que $x^2 < 0$ » est <b>fausse</b>, on écrit :",
+  o:["« Prenons $x = 1$ : $1^2 = 1 ≥ 0$. »","« Soit $x ∈ ℝ$. Comme un carré est positif ou nul, $x^2 ≥ 0$ : jamais $x^2 < 0$. »","« Il existe $x ∈ ℝ$ tel que $x^2 ≥ 0$. »"],a:1,
+  ex:"Réfuter un « il existe » demande de traiter <b>tous</b> les $x$ (c'est la négation : « pour tout $x$, $x^2 ≥ 0$ »). Un seul $x$ qui ne convient pas ne prouve rien."}
+],
+pits:[
+ {bad:"« Pour $n = 1, 2, 3$ ça marche, donc c'est vrai. »",good:"« Soit $n$ quelconque… » — ou un contre-exemple si c'est faux",why:"Vérifier quelques cas ne démontre jamais un « pour tout »."},
+ {bad:"« Ça ne marche plus pour de grandes valeurs de $n$. »",good:"« Prenons $n = 40$ : $n^2 + n + 41 = 41^2$. »",why:"Un contre-exemple est explicite, précis et vérifiable."},
+ {bad:"Nier « pour tout $x$, $P(x)$ » par « pour tout $x$, non $P(x)$ »",good:"« il existe $x$ tel que non $P(x)$ »",why:"Le « pour tout » devient « il existe » dans la négation."}
+]
+});
+
+/* Questions du défi : choisir la technique */
+const CHOIX=[
+ {q:"Montrer que pour tout $n ∈ ℕ$, $∑_{k=0}^{n} 2^k = 2^{n+1} - 1$. Quelle technique est la plus naturelle ?",
+  o:["Récurrence","Absurde","Contre-exemple"],a:0,
+  ex:"Une propriété indexée par $n$, où passer de $n$ à $n+1$ revient à ajouter un terme : c'est le terrain de la récurrence."},
+ {q:"Montrer que $√{3}$ est irrationnel. Quelle technique est la plus naturelle ?",
+  o:["Disjonction de cas","Raisonnement par l'absurde","Analyse-synthèse"],a:1,
+  ex:"Une irrationalité se prouve classiquement en supposant $√{3}$ rationnel (fraction irréductible) et en aboutissant à une contradiction."},
+ {q:"Montrer que si $n^2$ est divisible par 3, alors $n$ est divisible par 3. Quelle technique ?",
+  o:["Contraposée","Analyse-synthèse","Récurrence"],a:0,
+  ex:"Nier « $n$ divisible par 3 » donne $n = 3k+1$ ou $n = 3k+2$ : c'est exploitable. Partir de « $n^2$ divisible par 3 » ne dit rien de simple sur $n$."},
+ {q:"Montrer que toute fonction $f : ℝ → ℝ$ s'écrit de façon unique comme somme d'une fonction paire et d'une fonction impaire. Quelle technique ?",
+  o:["Récurrence","Contre-exemple","Analyse-synthèse"],a:2,
+  ex:"« Existence et unicité » : on cherche d'abord ce que la décomposition doit être (analyse), puis on vérifie qu'elle convient (synthèse)."},
+ {q:"Montrer que pour tout entier $n$, $n^2 + 3n$ est pair. Quelle technique est la plus efficace ?",
+  o:["Absurde","Disjonction de cas (parité de $n$)","Analyse-synthèse"],a:1,
+  ex:"Si $n$ est pair, $n$ est pair ; si $n$ est impair, $n + 3$ est pair : dans les deux cas $n(n+3)$ est pair. La situation se scinde naturellement."},
+ {q:"Réfuter : « pour tout réel $x$, $x^2 > x$ ». Quelle technique ?",
+  o:["Récurrence","Contraposée","Contre-exemple"],a:2,
+  ex:"Réfuter un « pour tout » : un seul contre-exemple (par exemple $x = 1/2$) suffit."}
+];
+
+/* ================= initialisation des données ================= */
+const QMAP={},CMAP={},POOL=[];
+TECHS.forEach(t=>{
+  t.cloze.forEach((c,i)=>{c.id=t.id+"-c"+i;CMAP[c.id]=c;});
+  t.qcm.forEach((q,i)=>{q.key=t.id+":"+i;QMAP[q.key]=q;POOL.push(q);});
+});
+CHOIX.forEach((q,i)=>{q.key="choix:"+i;QMAP[q.key]=q;POOL.push(q);});
+
+/* ================= stockage (facultatif) ================= */
+const store={
+  get(k){try{return window.localStorage.getItem(k);}catch(e){return null;}},
+  set(k,v){try{window.localStorage.setItem(k,v);}catch(e){}}
+};
+let P={cloze:{},qcm:{}};
+try{const raw=store.get("preuve-v1");if(raw){const o=JSON.parse(raw);if(o&&o.cloze&&o.qcm)P=o;}}catch(e){}
+const save=()=>store.set("preuve-v1",JSON.stringify(P));
+
+/* ================= rendu ================= */
+function renderExample(ex){
+  return '<div class="copy"><div class="copy-head"><p class="stmt">'+rich(ex.statement)+'</p>'+
+   '<button type="button" class="btn sm" data-act="notes" aria-pressed="false">Masquer les annotations</button></div>'+
+   '<ol class="proof">'+ex.lines.map(l=>'<li><div class="pt">'+rich(l[0])+'</div><div class="pn"><span>'+rich(l[1])+"</span></div></li>").join("")+"</ol>"+
+   '<p class="legend">Les mots <mark>surlignés</mark> sont les mots de liaison à retenir.</p></div>';
+}
+function renderCloze(c){
+  const order=[];
+  const paras=c.text.split("\n").map(p=>{
+    const parts=p.split(/\[\[(\w+)\]\]/);
+    let out="";
+    for(let i=0;i<parts.length;i++){
+      if(i%2===0){out+=rich(parts[i]);}
+      else{
+        const k=parts[i];order.push(k);
+        const b=c.blanks[k];
+        const w=Math.min(28,Math.max(5,b.a[0].length+3));
+        out+='<input class="blank" type="text" data-b="'+k+'" placeholder="'+order.length+'" aria-label="Trou '+order.length+'" style="width:'+w+'ch" autocomplete="off" autocapitalize="none" autocorrect="off" spellcheck="false" enterkeyhint="next">';
+      }
+    }
+    return "<p>"+out+"</p>";
+  }).join("");
+  const seen={};
+  const bank=shuffle(order.map(k=>c.blanks[k].a[0]).concat(c.extra||[]).filter(x=>seen[x]?false:(seen[x]=true)));
+  return '<div class="cloze'+(P.cloze[c.id]?" is-done":"")+'" data-id="'+c.id+'">'+
+   '<h4 class="cz-title">'+rich(c.title)+"</h4>"+
+   '<p class="stmt">'+rich(c.statement)+"</p>"+
+   '<div class="cz-text">'+paras+"</div>"+
+   '<div class="cz-actions">'+
+    '<button type="button" class="btn primary sm" data-act="check">Vérifier</button>'+
+    '<button type="button" class="btn sm" data-act="hint">Indice</button>'+
+    '<button type="button" class="btn sm" data-act="bank">Banque de mots</button>'+
+    '<button type="button" class="btn sm" data-act="show">Voir la solution</button>'+
+    '<button type="button" class="btn sm" data-act="reset">Recommencer</button>'+
+   "</div>"+
+   '<p class="cz-fb" aria-live="polite"></p>'+
+   '<div class="cz-hints" hidden><ol>'+order.map(k=>"<li>"+rich(c.blanks[k].h)+"</li>").join("")+"</ol></div>"+
+   '<div class="cz-bank" hidden>'+bank.map(x=>'<button type="button" class="chip" data-v="'+attr(x)+'">'+esc(x)+"</button>").join("")+"</div>"+
+   "</div>";
+}
+function renderQcm(q,key,n,mode){
+  const prev=(mode!=="defi"&&P.qcm[key])?" prev-ok":"";
+  return '<div class="qcm'+prev+'" data-key="'+key+'"'+(mode?' data-mode="'+mode+'"':"")+">"+
+   '<p class="q"><span class="qn">Q'+n+"</span>"+rich(q.q)+"</p>"+
+   '<div class="opts">'+q.o.map((o,i)=>'<button type="button" class="opt" data-i="'+i+'"><span class="l">'+"ABCD".charAt(i)+'</span><span class="t">'+rich(o)+"</span></button>").join("")+"</div>"+
+   '<div class="why" hidden></div></div>';
+}
+function renderPits(list){
+  return list.map(p=>'<div class="pit"><div class="pit-grid"><div class="bad"><b>À éviter</b>'+rich(p.bad)+'</div><div class="good"><b>À écrire</b>'+rich(p.good)+'</div></div><p class="pwhy">'+rich(p.why)+"</p></div>").join("");
+}
+function pager(ti){
+  const prev=ti>0?TECHS[ti-1]:null;
+  const next=ti<TECHS.length-1?TECHS[ti+1]:{id:"defi",nav:"Le défi final"};
+  return '<div class="pager">'+(prev?'<button type="button" class="btn" data-go="'+prev.id+'">Chapitre précédent : '+esc(prev.nav)+"</button>":"<span></span>")+
+   '<button type="button" class="btn primary" data-go="'+next.id+'">Chapitre suivant : '+esc(next.nav)+"</button></div>";
+}
+function renderTech(t,ti){
+  const blk=(title,body,head)=>'<section class="blk"><h3><span class="ttl">'+title+"</span>"+(head||"")+"</h3>"+body+"</section>";
+  let h='<article class="tech" data-tech="'+t.id+'">';
+  h+='<header class="tech-head"><span class="glyph" aria-hidden="true">'+esc(t.icon)+'</span><div><h2>'+esc(t.title)+'</h2><p class="lead">'+rich(t.lead)+"</p></div></header>";
+  if(t.intro)h+=introHTML();
+  h+=blk("Le principe",t.principle.map(p=>"<p>"+rich(p)+"</p>").join(""));
+  h+=blk("Le squelette de rédaction",'<ol class="skel">'+t.skeleton.map(s=>"<li>"+rich(s)+"</li>").join("")+"</ol>");
+  (t.extras||[]).forEach(x=>{h+=blk(x.title,rich(typeof x.html==="function"?x.html():x.html));});
+  h+=blk("Un exemple annoté",renderExample(t.example));
+  h+=blk("À toi de compléter",t.cloze.map(renderCloze).join(""));
+  h+=blk("QCM : quelle formulation ?",t.qcm.map((q,i)=>renderQcm(q,q.key,i+1)).join(""),'<span class="mini" data-score="'+t.id+'"></span>');
+  h+=blk("Pièges classiques",renderPits(t.pits));
+  h+=pager(ti)+"</article>";
+  return h;
+}
+let draw=[];
+function newDraw(){draw=shuffle(POOL).slice(0,10);}
+function renderDefi(){
+  if(!draw.length)newDraw();
+  return '<article class="tech" data-tech="defi"><header class="tech-head"><span class="glyph" aria-hidden="true">★</span><div><h2>Le défi final</h2>'+
+   '<p class="lead">Dix questions tirées au hasard dans tous les chapitres, dont des questions « quelle technique choisir ? ». Pas d\'indice : à toi de jouer.</p></div></header>'+
+   '<div class="scorebox" id="defiScore" aria-live="polite"></div>'+
+   '<div id="defiList">'+draw.map((q,i)=>renderQcm(q,q.key,i+1,"defi")).join("")+"</div>"+
+   '<div class="pager"><button type="button" class="btn primary" data-act="newdraw">Nouveau tirage</button></div></article>';
+}
+function updateDefiScore(){
+  const box=$("#defiScore");if(!box)return;
+  const list=$("#defiList");
+  const ok=$$(".qcm.is-ok",list).length,ko=$$(".qcm.is-ko",list).length,done=ok+ko;
+  let msg="Réponds aux questions ci-dessous.";
+  if(done===draw.length){msg=ok>=9?"Impeccable : tes formulations sont au point.":ok>=6?"Solide. Relis les chapitres où tu as hésité.":"Reprends les chapitres un par un, puis retente un nouveau tirage.";}
+  else if(done>0){msg=done+" question"+(done>1?"s":"")+" sur "+draw.length;}
+  box.innerHTML='<span class="big">'+ok+" / "+draw.length+"</span><span>"+msg+"</span>";
+}
+
+/* ================= navigation ================= */
+const nav=$("#nav"),main=$("#main");
+nav.innerHTML=TECHS.concat([{id:"defi",nav:"Défi final",icon:"★"}]).map(t=>
+  '<button type="button" class="nav-chip" data-id="'+t.id+'"><span class="ico">'+esc(t.icon)+'</span><span>'+esc(t.nav)+'</span><span class="cnt"></span></button>').join("");
+let cur="bases";
+function valid(id){return id==="defi"||TECHS.some(t=>t.id===id);}
+function show(id,first){
+  if(!valid(id))id="bases";
+  cur=id;
+  if(id==="defi"){draw=[];main.innerHTML=renderDefi();updateDefiScore();}
+  else{const ti=TECHS.findIndex(t=>t.id===id);main.innerHTML=renderTech(TECHS[ti],ti);}
+  $$(".nav-chip").forEach(b=>{if(b.dataset.id===id){b.setAttribute("aria-current","page");}else{b.removeAttribute("aria-current");}});
+  const act=$('.nav-chip[data-id="'+id+'"]');
+  if(act&&act.scrollIntoView){try{act.scrollIntoView({inline:"center",block:"nearest"});}catch(e){}}
+  updateProgressUI();
+  if(!first)window.scrollTo(0,0);
+}
+function go(id){
+  try{if(window.location.hash!=="#"+id)window.history.pushState(null,"","#"+id);}catch(e){}
+  show(id);
+}
+window.addEventListener("popstate",()=>{show((window.location.hash||"").replace("#",""));});
+
+/* ================= progression ================= */
+function counts(t){
+  let done=0;
+  t.cloze.forEach(c=>{if(P.cloze[c.id])done++;});
+  t.qcm.forEach(q=>{if(P.qcm[q.key])done++;});
+  return {done:done,total:t.cloze.length+t.qcm.length};
+}
+function updateProgressUI(){
+  let D=0,T=0;
+  TECHS.forEach(t=>{
+    const c=counts(t);D+=c.done;T+=c.total;
+    const chip=$('.nav-chip[data-id="'+t.id+'"]');
+    if(chip){const cnt=$(".cnt",chip);cnt.textContent=c.done===c.total?"✓":c.done+"/"+c.total;chip.classList.toggle("complete",c.done===c.total);}
+    const sc=$('[data-score="'+t.id+'"]');
+    if(sc){const q=t.qcm.filter(x=>P.qcm[x.key]).length;sc.textContent=q+" / "+t.qcm.length+" réussies";}
+  });
+  const pct=T?Math.round(100*D/T):0;
+  $("#gauge-txt").textContent=pct+" %";
+  $("#gauge-bar").style.width=pct+"%";
+}
+
+/* ================= textes à trous ================= */
+function checkCloze(cz){
+  const c=CMAP[cz.dataset.id];
+  let ok=0,total=0,empty=0;
+  $$(".blank",cz).forEach(inp=>{
+    total++;
+    inp.classList.remove("ok","ko","shown");
+    const v=norm(inp.value);
+    if(!v){empty++;return;}
+    if(c.blanks[inp.dataset.b].a.some(a=>norm(a)===v)){ok++;inp.classList.add("ok");}else{inp.classList.add("ko");}
+  });
+  const fb=$(".cz-fb",cz);
+  if(ok===total){
+    if(cz.dataset.revealed){fb.textContent="Toutes les cases sont justes, mais la solution était affichée : recommence pour valider l'exercice.";fb.className="cz-fb warn";}
+    else{fb.textContent="Bravo, ta démonstration est complète et bien rédigée !";fb.className="cz-fb good";
+      P.cloze[c.id]=1;save();cz.classList.add("is-done");updateProgressUI();}
+  }else{
+    let m=ok+" / "+total+" trou"+(total>1?"s":"")+" juste"+(ok>1?"s":"");
+    if(empty)m+=" · "+empty+" à remplir";
+    if(total-ok-empty>0)m+=" · corrige les cases en rouge";
+    fb.textContent=m+".";fb.className="cz-fb warn";
+  }
+}
+function resetCloze(cz){
+  $$(".blank",cz).forEach(i=>{i.value="";i.classList.remove("ok","ko","shown","target");});
+  delete cz.dataset.revealed;cz._last=null;
+  const fb=$(".cz-fb",cz);fb.textContent="";fb.className="cz-fb";
+}
+function showSolution(cz){
+  const c=CMAP[cz.dataset.id];
+  $$(".blank",cz).forEach(i=>{i.value=c.blanks[i.dataset.b].a[0];i.classList.remove("ok","ko");i.classList.add("shown");});
+  cz.dataset.revealed="1";
+  const fb=$(".cz-fb",cz);fb.textContent="Solution affichée. Clique sur « Recommencer » pour refaire l'exercice par toi-même.";fb.className="cz-fb warn";
+}
+function insertChip(chip){
+  const cz=chip.closest(".cloze");
+  const inputs=$$(".blank",cz);
+  let inp=cz._last&&cz.contains(cz._last)?cz._last:inputs.find(i=>!i.value)||inputs[0];
+  inp.value=chip.dataset.v;inp.classList.remove("ok","ko","shown","target");
+  const idx=inputs.indexOf(inp);
+  const next=inputs.slice(idx+1).concat(inputs.slice(0,idx)).find(i=>!i.value);
+  inputs.forEach(i=>i.classList.remove("target"));
+  if(next){next.classList.add("target");cz._last=next;}else{cz._last=inp;}
+}
+
+/* ================= QCM ================= */
+function answer(opt){
+  const box=opt.closest(".qcm");if(box.dataset.done)return;
+  const q=QMAP[box.dataset.key];const i=+opt.dataset.i;const ok=i===q.a;
+  const defi=box.dataset.mode==="defi";
+  box.dataset.done="1";box.classList.add(ok?"is-ok":"is-ko");
+  $$(".opt",box).forEach((b,j)=>{b.disabled=true;if(j===q.a)b.classList.add("right");else if(j===i)b.classList.add("wrong");});
+  const why=$(".why",box);
+  why.innerHTML="<p><b>"+(ok?"Exact.":"Pas tout à fait.")+"</b> "+rich(q.ex)+"</p>"+
+    ((!ok&&!defi)?'<button type="button" class="btn sm" data-act="retry">Réessayer cette question</button>':"");
+  why.hidden=false;
+  if(defi){updateDefiScore();}
+  else if(ok){P.qcm[q.key]=1;save();updateProgressUI();}
+}
+function retry(box){
+  delete box.dataset.done;box.classList.remove("is-ok","is-ko");
+  $$(".opt",box).forEach(b=>{b.disabled=false;b.classList.remove("right","wrong");});
+  const why=$(".why",box);why.hidden=true;why.innerHTML="";
+}
+
+/* ================= événements ================= */
+let confirmReset=false,confirmTimer=0;
+function act(btn){
+  const a=btn.dataset.act;
+  const cz=btn.closest(".cloze");
+  if(a==="check")checkCloze(cz);
+  else if(a==="hint"){const h=$(".cz-hints",cz);h.hidden=!h.hidden;}
+  else if(a==="bank"){const b=$(".cz-bank",cz);b.hidden=!b.hidden;}
+  else if(a==="show")showSolution(cz);
+  else if(a==="reset")resetCloze(cz);
+  else if(a==="retry")retry(btn.closest(".qcm"));
+  else if(a==="notes"){const copy=btn.closest(".copy");const h=copy.classList.toggle("hide-notes");btn.setAttribute("aria-pressed",h?"true":"false");btn.textContent=h?"Afficher les annotations":"Masquer les annotations";}
+  else if(a==="newdraw"){draw=[];main.innerHTML=renderDefi();updateDefiScore();window.scrollTo(0,0);}
+  else if(a==="resetall"){
+    if(!confirmReset){confirmReset=true;btn.textContent="Sûr ? Clique encore pour effacer";clearTimeout(confirmTimer);confirmTimer=setTimeout(()=>{confirmReset=false;btn.textContent="Réinitialiser ma progression";},3500);}
+    else{confirmReset=false;clearTimeout(confirmTimer);btn.textContent="Réinitialiser ma progression";P={cloze:{},qcm:{}};save();show(cur,true);}
+  }
+}
+document.addEventListener("click",e=>{
+  const t=e.target;let n;
+  if((n=t.closest("[data-go]"))){go(n.dataset.go);return;}
+  if((n=t.closest(".opt"))){answer(n);return;}
+  if((n=t.closest(".chip"))){insertChip(n);return;}
+  if((n=t.closest(".nav-chip"))){go(n.dataset.id);return;}
+  if((n=t.closest("[data-act]"))){act(n);return;}
+});
+document.addEventListener("input",e=>{
+  const t=e.target;
+  if(t.classList&&t.classList.contains("blank"))t.classList.remove("ok","ko","shown");
+});
+document.addEventListener("focusin",e=>{
+  const t=e.target;
+  if(t.classList&&t.classList.contains("blank")){const cz=t.closest(".cloze");cz._last=t;$$(".blank",cz).forEach(i=>i.classList.remove("target"));}
+});
+document.addEventListener("keydown",e=>{
+  const t=e.target;
+  if(e.key==="Enter"&&t.classList&&t.classList.contains("blank")){
+    e.preventDefault();
+    const cz=t.closest(".cloze");const ins=$$(".blank",cz);const i=ins.indexOf(t);
+    if(i<ins.length-1)ins[i+1].focus();else checkCloze(cz);
+  }
+});
+
+/* ================= thème ================= */
+const root=document.documentElement,themeBtn=$("#themeBtn");
+const savedTheme=store.get("preuve-theme");
+if(savedTheme==="light"||savedTheme==="dark")root.setAttribute("data-theme",savedTheme);
+function isDark(){
+  const t=root.getAttribute("data-theme");
+  if(t)return t==="dark";
+  return !!(window.matchMedia&&window.matchMedia("(prefers-color-scheme: dark)").matches);
+}
+function themeUI(){
+  const d=isDark();
+  themeBtn.textContent=d?"☀":"☾";
+  const l=d?"Passer en mode clair (cahier)":"Passer en mode sombre (tableau)";
+  themeBtn.setAttribute("aria-label",l);themeBtn.title=l;
+}
+themeBtn.addEventListener("click",()=>{
+  const n=isDark()?"light":"dark";
+  root.setAttribute("data-theme",n);store.set("preuve-theme",n);themeUI();
+});
+themeUI();
+
+/* ================= démarrage ================= */
+show((window.location.hash||"").replace("#","")||"bases",true);
+if(window.__PREUVE_TEST)window.__PREUVE_TEST={TECHS:TECHS,CHOIX:CHOIX,renderTech:renderTech,renderDefi:renderDefi,math:math,rich:rich,norm:norm,CMAP:CMAP};
+})();
+</script>
+</body>
+</html>
